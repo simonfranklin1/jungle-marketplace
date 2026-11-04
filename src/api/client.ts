@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import type { ApiErrorBody, ApiErrorCode } from './types'
 
 export class ApiError extends Error {
@@ -32,6 +32,33 @@ export function configureAuth(getter: TokenGetter, handler: ExpiredHandler) {
   onAuthFailure = handler
 }
 
+/**
+ * O MSW roda num Service Worker que o navegador pode encerrar quando ocioso; ao religar, ele
+ * esquece quais abas estão ativas e deixa a requisição passar para o servidor estático
+ * (que responde HTML). Detectamos isso, reativamos o mock e repetimos a requisição uma vez.
+ */
+let recoverMocks: (() => Promise<void>) | null = null
+let recovering: Promise<void> | null = null
+export function configureMockRecovery(fn: () => Promise<void>) {
+  recoverMocks = fn
+}
+
+type RetriableConfig = InternalAxiosRequestConfig & { _mockRetry?: boolean }
+
+function isNotJson(res?: AxiosResponse) {
+  if (!res || res.status === 204) return false
+  const ct = String(res.headers['content-type'] ?? '')
+  return !ct.includes('json')
+}
+
+async function retryAfterRecovery(config: RetriableConfig) {
+  if (!recoverMocks || config._mockRetry) return null
+  config._mockRetry = true
+  recovering ??= recoverMocks().finally(() => (recovering = null))
+  await recovering
+  return api.request(config)
+}
+
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? '/api',
   timeout: 8000,
@@ -45,9 +72,20 @@ api.interceptors.request.use((config) => {
 })
 
 api.interceptors.response.use(
-  (res) => res,
-  (error: AxiosError<ApiErrorBody>) => {
+  async (res) => {
+    if (isNotJson(res)) {
+      const retried = await retryAfterRecovery(res.config as RetriableConfig)
+      if (retried) return retried
+      throw new ApiError('TRANSIENT', 'O serviço não respondeu corretamente. Tente novamente.', res.status)
+    }
+    return res
+  },
+  async (error: AxiosError<ApiErrorBody>) => {
     if (axios.isCancel(error)) throw error
+    if (error.config && !error.response?.data?.error && isNotJson(error.response)) {
+      const retried = await retryAfterRecovery(error.config as RetriableConfig)
+      if (retried) return retried
+    }
     const status = error.response?.status ?? 0
     const body = error.response?.data?.error
     let apiError: ApiError

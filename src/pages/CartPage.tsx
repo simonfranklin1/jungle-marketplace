@@ -350,7 +350,7 @@ function CouponBox({
   )
 }
 
-export function Summary({ quote, loading }: { quote?: Quote; loading: boolean }) {
+export function Summary({ quote, loading, networkPending = false }: { quote?: Quote; loading: boolean; networkPending?: boolean }) {
   const row = 'flex justify-between gap-4'
   if (loading && !quote) return <div className="shimmer mt-6 h-32 rounded-sm" aria-hidden />
   if (!quote) return null
@@ -366,12 +366,12 @@ export function Summary({ quote, loading }: { quote?: Quote; loading: boolean })
       </div>
       <div className={row}>
         <dt>Taxa de rede</dt>
-        <dd className="text-base">{formatEth(quote.networkFeeEth)}</dd>
+        <dd className="text-base">{networkPending ? '—' : formatEth(quote.networkFeeEth)}</dd>
       </div>
-      <p className="text-right text-xs text-primary">Taxa estimada</p>
+      <p className="text-right text-xs text-primary">{networkPending ? 'Selecione uma rede para calcular' : 'Taxa estimada'}</p>
       <div className={cn(row, 'border-t border-border pt-3 text-base font-bold')}>
         <dt>Total</dt>
-        <dd className="text-lg text-primary">{formatEth(quote.totalEth)}</dd>
+        <dd className="text-lg text-primary">{networkPending ? '—' : formatEth(quote.totalEth)}</dd>
       </div>
     </dl>
   )

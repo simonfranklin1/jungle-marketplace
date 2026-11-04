@@ -114,7 +114,7 @@ function CheckoutForm() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [wallet, setWallet] = useState<WalletState>({ status: 'idle' })
   const [phase, setPhase] = useState<Phase>('idle')
-  const [alert, setAlert] = useState<{ tone: 'error' | 'info'; text: string } | null>(null)
+  const [alert, setAlert] = useState<{ tone: 'error' | 'info'; text: string; kind?: 'validation' } | null>(null)
   const attempt = useRef<{ fp: string; key: string } | null>(null)
 
   const network = (values.network || 'ethereum') as Network
@@ -163,7 +163,7 @@ function CheckoutForm() {
     const errs = validate(values, useOther, wallet)
     setErrors(errs)
     if (Object.keys(errs).length) {
-      setAlert({ tone: 'error', text: `Corrija ${Object.keys(errs).length} campo(s) destacado(s) para continuar.` })
+      setAlert({ tone: 'error', text: '', kind: 'validation' })
       requestAnimationFrame(() => (document.querySelector('[aria-invalid="true"]') as HTMLElement | null)?.focus())
       return
     }
@@ -242,13 +242,13 @@ function CheckoutForm() {
           continue
         }
         setPhase('idle')
-        handleOrderError(e)
+        handleOrderError(e, fresh.totalEth)
         return
       }
     }
   }
 
-  const handleOrderError = (e: unknown) => {
+  const handleOrderError = (e: unknown, expectedTotal: string) => {
     if (!(e instanceof ApiError)) {
       setAlert({ tone: 'error', text: 'Não foi possível confirmar o pedido.' })
       return
@@ -264,7 +264,10 @@ function CheckoutForm() {
       return
     }
     if (e.code === 'PRICE_CHANGED' && details?.quote)
-      setAlert({ tone: 'info', text: `${e.message} Novo total: ${formatEth(details.quote.totalEth)}.` })
+      setAlert({
+        tone: 'info',
+        text: `O total mudou de ${formatEth(expectedTotal)} para ${formatEth(details.quote.totalEth)}. Revise e confirme novamente.`,
+      })
     else setAlert({ tone: 'error', text: e.message })
   }
 
@@ -402,7 +405,7 @@ function CheckoutForm() {
               </Link>
             </p>
           )}
-          <Summary quote={quote.data} loading={quote.isPending} />
+          <Summary quote={quote.data} loading={quote.isPending} networkPending={!values.network} />
 
           <fieldset disabled={busy} className="mt-6">
             <legend className="mb-3 w-full text-center font-bold">Carteira e rede</legend>
@@ -436,7 +439,13 @@ function CheckoutForm() {
           </fieldset>
 
           <div aria-live="assertive" className="mt-4 space-y-2">
-            {alert && (
+            {alert && alert.kind === 'validation' && Object.keys(errors).length > 0 && (
+              <p role="alert" className="flex gap-2 rounded-sm border border-destructive/60 px-3 py-2 text-sm text-destructive">
+                <AlertTriangleIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
+                Corrija {Object.keys(errors).length} campo(s) destacado(s) para continuar.
+              </p>
+            )}
+            {alert && alert.kind !== 'validation' && (
               <p
                 role="alert"
                 className={cn(

@@ -5,6 +5,7 @@ import { RouterProvider } from '@tanstack/react-router'
 import { queryClient } from '@/api/query-client'
 import { createAppRouter } from '@/router'
 import { bootstrapAuth } from '@/features/auth/auth-actions'
+import { configureMockRecovery } from '@/api/client'
 import './index.css'
 
 /**
@@ -20,10 +21,15 @@ async function enableMocking() {
   ])
   const { reset } = scenario.applyScenarioFromUrl()
   if (reset) dbModule.resetDb()
-  await worker.start({
+  const options = {
     onUnhandledRequest: 'bypass',
     quiet: import.meta.env.PROD,
     serviceWorker: { url: '/mockServiceWorker.js' },
+  } as const
+  await worker.start(options)
+  configureMockRecovery(async () => {
+    worker.stop()
+    await worker.start({ ...options, quiet: true })
   })
 }
 

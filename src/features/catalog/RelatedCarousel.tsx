@@ -24,7 +24,7 @@ export function RelatedCarousel({ nftId, title }: { nftId: string; title: string
         </div>
       </div>
       <ul ref={ref} className="mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [scrollbar-width:none]">
-        {(data ?? Array.from({ length: 5 }, () => null)).map((n, i) => (
+        {(Array.isArray(data) ? data : Array.from({ length: 5 }, () => null)).map((n, i) => (
           <li key={n?.id ?? i} className="w-[44%] shrink-0 snap-start sm:w-[30%] lg:w-[18.4%]">
             {n ? <NftCard nft={n} /> : <div className="shimmer aspect-[1/1.1]" aria-hidden />}
           </li>
