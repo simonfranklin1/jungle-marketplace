@@ -1,4 +1,6 @@
 import { Link } from '@tanstack/react-router'
+import { HeartIcon } from 'lucide-react'
+import { useFavorites } from '@/features/favorites/use-favorites'
 import type { NftSummary } from '@/api/types'
 import { formatEth } from '@/lib/eth'
 import { cn } from '@/lib/utils'
@@ -18,6 +20,7 @@ export function NftCard({ nft, priority = false, className }: { nft: NftSummary;
             Esgotado
           </span>
         )}
+        <FavoriteButton nftId={nft.id} name={nft.name} />
         <img
           src={nft.image}
           alt={`Arte do NFT ${nft.name}`}
@@ -59,5 +62,24 @@ export function NftCardSkeleton() {
       <div className="shimmer mt-3 h-4 w-2/3 rounded-sm" />
       <div className="shimmer mt-2 h-4 w-1/3 rounded-sm" />
     </div>
+  )
+}
+
+function FavoriteButton({ nftId, name }: { nftId: string; name: string }) {
+  const fav = useFavorites()
+  const on = fav.isFavorite(nftId)
+  return (
+    <button
+      type="button"
+      onClick={() => fav.toggle(nftId)}
+      aria-pressed={on}
+      aria-label={on ? `Remover ${name} dos favoritos` : `Favoritar ${name}`}
+      className={cn(
+        'absolute right-4 bottom-4 z-10 grid size-9 place-items-center rounded-full bg-background/85 text-primary transition-opacity hover:bg-background focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100',
+        on && 'md:opacity-100',
+      )}
+    >
+      <HeartIcon className={cn('size-4', on && 'fill-current')} aria-hidden />
+    </button>
   )
 }

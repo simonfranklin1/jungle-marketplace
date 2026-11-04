@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { LogIn, SearchIcon, ShoppingCart } from 'lucide-react'
-import { toast } from 'sonner'
+import { LogIn, LogOut, SearchIcon, ShoppingCart } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useCartCount } from '@/features/cart/cart-count'
+import { useCartCount } from '@/features/cart/use-cart'
 import { cn } from '@/lib/utils'
 import { comingSoon } from '@/lib/coming-soon'
+import { authDialog, useUser } from '@/features/auth/session-store'
+import { logout } from '@/features/auth/auth-actions'
 
 const navLink =
   'relative py-2 text-sm text-foreground transition-colors hover:text-primary data-[status=active]:font-semibold data-[status=active]:text-primary data-[status=active]:after:absolute data-[status=active]:after:inset-x-0 data-[status=active]:after:-bottom-[13px] data-[status=active]:after:h-0.5 data-[status=active]:after:bg-primary'
@@ -70,14 +71,36 @@ export function Header() {
 }
 
 function AccountButton() {
+  const user = useUser()
+  if (!user)
+    return (
+      <Button size="sm" className="h-8 gap-1.5 px-3 font-semibold" onClick={() => authDialog.open('login')}>
+        <LogIn aria-hidden /> <span className="hidden sm:inline">Entrar</span>
+        <span className="sr-only sm:hidden">Entrar</span>
+      </Button>
+    )
   return (
-    <Button
-      size="sm"
-      className="hidden h-8 gap-1.5 px-3 font-semibold sm:inline-flex"
-      onClick={() => toast.info('Login chega na próxima fase.')}
-    >
-      <LogIn aria-hidden /> Entrar
-    </Button>
+    <div className="flex items-center gap-2">
+      <Link
+        to="/perfil"
+        className="flex items-center gap-2 rounded-sm px-1 text-sm hover:text-primary"
+        aria-label={`Meu perfil (${user.displayName})`}
+      >
+        <span className="grid size-8 place-items-center rounded-full bg-primary font-bold text-primary-foreground" aria-hidden>
+          {user.displayName.charAt(0).toUpperCase()}
+        </span>
+        <span className="hidden max-w-28 truncate lg:inline">{user.displayName.split(' ')[0]}</span>
+      </Link>
+      <button
+        type="button"
+        onClick={() => void logout()}
+        className="hidden size-8 place-items-center rounded-sm hover:text-primary sm:grid"
+        aria-label="Sair da conta"
+        title="Sair"
+      >
+        <LogOut className="size-4" aria-hidden />
+      </button>
+    </div>
   )
 }
 

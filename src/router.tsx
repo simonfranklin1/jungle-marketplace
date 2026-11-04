@@ -12,12 +12,14 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { Toaster } from '@/components/ui/sonner'
+import { AuthDialog } from '@/features/auth/AuthDialog'
 import { catalogSearchSchema, type CatalogSearch } from '@/features/catalog/search-schema'
 import { CatalogSection } from '@/features/catalog/CatalogSection'
 import { nftDetailQuery, nftListQuery, nftRelatedQuery } from '@/api/nfts'
 import { toListQuery } from '@/features/catalog/search-schema'
 import { HomePage } from '@/pages/HomePage'
 import { NftDetailPage } from '@/pages/NftDetailPage'
+import { CartPage } from '@/pages/CartPage'
 
 interface RouterContext {
   queryClient: QueryClient
@@ -38,6 +40,7 @@ function RootLayout() {
       </main>
       <Footer />
       <MobileNav />
+      <AuthDialog />
       <Toaster position="top-center" richColors closeButton />
     </>
   )
@@ -130,7 +133,13 @@ function Placeholder({ title }: { title: string }) {
 const cartRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/carrinho',
-  component: () => <Placeholder title="Carrinho" />,
+  component: CartPage,
+})
+
+const checkoutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/checkout',
+  component: () => <Placeholder title="Pagamento" />,
 })
 
 const profileRoute = createRoute({
@@ -151,7 +160,7 @@ function NotFound() {
   )
 }
 
-const routeTree = rootRoute.addChildren([indexRoute, marketRoute, nftRoute, cartRoute, profileRoute])
+const routeTree = rootRoute.addChildren([indexRoute, marketRoute, nftRoute, cartRoute, checkoutRoute, profileRoute])
 
 export function createAppRouter(queryClient: QueryClient) {
   return createRouter({

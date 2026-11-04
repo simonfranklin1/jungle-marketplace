@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { LayoutGridIcon, HouseIcon, ShoppingCart, UserIcon } from 'lucide-react'
-import { useCartCount } from '@/features/cart/cart-count'
+import { useCartCount } from '@/features/cart/use-cart'
 
 const item =
   'flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] text-subtle data-[status=active]:text-primary hover:text-primary'

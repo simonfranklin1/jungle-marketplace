@@ -1,5 +1,6 @@
 import type { Cart, Order, User, Wallet } from '@/api/types'
 import { buildCatalog, type NftRecord } from './data/seed'
+import { SEED_USERS } from './data/users'
 
 /**
  * "Banco" do mock server. Vive no browser junto com o MSW e é persistido em
@@ -37,13 +38,13 @@ export interface DbState {
 }
 
 const KEY = 'kurio:mockdb'
-const SCHEMA = 1
+const SCHEMA = 2
 
 function fresh(): DbState {
   return {
     schema: SCHEMA,
     nfts: buildCatalog(),
-    users: [],
+    users: SEED_USERS.map((u) => ({ ...u })),
     sessions: [],
     carts: {},
     favorites: {},

@@ -1,15 +1,17 @@
-import { useRef, useState } from 'react'
-import { Link } from '@tanstack/react-router'
+import { useState } from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { ChevronLeft, ChevronRight, HeartIcon, MailIcon, MinusIcon, PlusIcon, SearchIcon, StarIcon } from 'lucide-react'
+import { HeartIcon, MailIcon, MinusIcon, PlusIcon, SearchIcon, StarIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { nftDetailQuery, nftRelatedQuery } from '@/api/nfts'
+import { nftDetailQuery } from '@/api/nfts'
 import { isApiError } from '@/api/client'
 import type { Edition, Nft } from '@/api/types'
 import { NETWORKS } from '@/api/types'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { LinkedinIcon, TwitterIcon } from '@/components/brand-icons'
-import { NftCard } from '@/features/catalog/NftCard'
+import { RelatedCarousel } from '@/features/catalog/RelatedCarousel'
+import { useCart } from '@/features/cart/use-cart'
+import { useFavorites } from '@/features/favorites/use-favorites'
 import { formatEth } from '@/lib/eth'
 import { cn } from '@/lib/utils'
 
@@ -69,6 +71,10 @@ function NftDetail({ nft }: { nft: Nft }) {
   const [qty, setQty] = useState(1)
   const [zoom, setZoom] = useState(false)
   const [tab, setTab] = useState<'details' | 'reviews'>('details')
+  const cart = useCart()
+  const favorites = useFavorites()
+  const navigate = useNavigate()
+  const isFav = favorites.isFavorite(nft.id)
 
   const edition = nft.editions.find((e) => e.id === editionId) ?? nft.editions[0]
   const maxQty = Math.min(edition.available, nft.maxPerOrder)
@@ -216,18 +222,26 @@ function NftDetail({ nft }: { nft: Nft }) {
               <button
                 type="button"
                 disabled={soldOut || edition.available === 0}
-                onClick={() => toast.info('Carrinho chega na próxima fase.')}
+                onClick={() => {
+                  const res = cart.add({ nftId: nft.id, editionId: edition.id, quantity: effectiveQty }, maxQty)
+                  if (res.capped) toast.warning(`Limite atingido: você já tem ${res.quantity} desta edição no carrinho.`)
+                  else
+                    toast.success(`${nft.name} (${edition.label}) adicionado ao carrinho.`, {
+                      action: { label: 'Ver carrinho', onClick: () => navigate({ to: '/carrinho' }) },
+                    })
+                }}
                 className="h-9 rounded-sm bg-primary px-8 text-sm font-bold text-primary-foreground hover:bg-primary/85 disabled:opacity-40"
               >
                 {soldOut ? 'ESGOTADO' : 'COMPRAR'}
               </button>
               <button
                 type="button"
-                onClick={() => toast.info('Entre para favoritar NFTs (próxima fase).')}
+                onClick={() => favorites.toggle(nft.id)}
+                disabled={favorites.pending}
                 className="inline-flex h-9 items-center gap-2 rounded-sm border border-primary px-3 text-sm text-primary hover:bg-secondary"
-                aria-pressed={false}
+                aria-pressed={isFav}
               >
-                <HeartIcon className="size-4" aria-hidden /> Favoritar
+                <HeartIcon className={cn('size-4', isFav && 'fill-current')} aria-hidden /> {isFav ? 'Favoritado' : 'Favoritar'}
               </button>
             </div>
           </div>
@@ -337,7 +351,7 @@ function NftDetail({ nft }: { nft: Nft }) {
         )}
       </section>
 
-      <Related nftId={nft.id} />
+      <RelatedCarousel nftId={nft.id} title="Mais desta coleção" />
 
       <Dialog open={zoom} onOpenChange={setZoom}>
         <DialogContent className="max-w-[min(92vw,720px)] bg-card p-3 sm:max-w-[min(92vw,720px)]">
@@ -346,36 +360,6 @@ function NftDetail({ nft }: { nft: Nft }) {
         </DialogContent>
       </Dialog>
     </div>
-  )
-}
-
-function Related({ nftId }: { nftId: string }) {
-  const { data } = useQuery(nftRelatedQuery(nftId))
-  const ref = useRef<HTMLUListElement>(null)
-  const scroll = (dir: 1 | -1) => ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth' })
-  return (
-    <section aria-labelledby="related" className="mt-16">
-      <div className="flex items-center justify-between border-b border-border pb-2">
-        <h2 id="related" className="font-bold text-primary">
-          Mais desta coleção
-        </h2>
-        <div className="flex gap-2">
-          <button type="button" onClick={() => scroll(-1)} aria-label="Anteriores" className="grid size-8 place-items-center rounded-full border border-primary text-primary">
-            <ChevronLeft className="size-4" aria-hidden />
-          </button>
-          <button type="button" onClick={() => scroll(1)} aria-label="Próximos" className="grid size-8 place-items-center rounded-full border border-primary text-primary">
-            <ChevronRight className="size-4" aria-hidden />
-          </button>
-        </div>
-      </div>
-      <ul ref={ref} className="mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [scrollbar-width:none]">
-        {(data ?? Array.from({ length: 5 }, () => null)).map((n, i) => (
-          <li key={n?.id ?? i} className="w-[44%] shrink-0 snap-start sm:w-[30%] lg:w-[18.4%]">
-            {n ? <NftCard nft={n} /> : <div className="shimmer aspect-[1/1.1]" aria-hidden />}
-          </li>
-        ))}
-      </ul>
-    </section>
   )
 }
 
