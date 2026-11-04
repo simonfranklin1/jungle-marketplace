@@ -36,7 +36,6 @@ export function toSummary(n: NftRecord): NftSummary {
 }
 
 export function toNft(n: NftRecord): Nft {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { trendingScore, ...rest } = n
   return rest
 }

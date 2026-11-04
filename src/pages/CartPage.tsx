@@ -177,7 +177,7 @@ function CartRow({
         <div className="col-span-1 flex items-center gap-4 md:col-span-1">
           <img src={line.thumb} alt="" width={80} height={80} className="size-16 shrink-0 object-cover md:size-20" />
           <div className="hidden min-w-0 md:block">
-            <Link to="/nft/$nftId" params={{ nftId: line.nftId }} className="block truncate font-semibold hover:text-primary">
+            <Link to="/nft/$nftId" params={{ nftId: line.nftId }} className="block font-semibold break-words hover:text-primary">
               {line.name}
             </Link>
             <p className="text-sm text-muted-foreground">ID do token: {line.tokenId}</p>

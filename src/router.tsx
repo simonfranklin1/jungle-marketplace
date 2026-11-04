@@ -20,6 +20,8 @@ import { toListQuery } from '@/features/catalog/search-schema'
 import { HomePage } from '@/pages/HomePage'
 import { NftDetailPage } from '@/pages/NftDetailPage'
 import { CartPage } from '@/pages/CartPage'
+import { CheckoutPage } from '@/pages/CheckoutPage'
+import { OrderPage } from '@/pages/OrderPage'
 
 interface RouterContext {
   queryClient: QueryClient
@@ -41,7 +43,7 @@ function RootLayout() {
       <Footer />
       <MobileNav />
       <AuthDialog />
-      <Toaster position="top-center" richColors closeButton />
+      <Toaster position="top-center" richColors closeButton expand visibleToasts={4} />
     </>
   )
 }
@@ -139,7 +141,16 @@ const cartRoute = createRoute({
 const checkoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/checkout',
-  component: () => <Placeholder title="Pagamento" />,
+  component: CheckoutPage,
+})
+
+const orderRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/pedido/$orderId',
+  component: function OrderRoute() {
+    const { orderId } = orderRoute.useParams()
+    return <OrderPage orderId={orderId} />
+  },
 })
 
 const profileRoute = createRoute({
@@ -160,7 +171,7 @@ function NotFound() {
   )
 }
 
-const routeTree = rootRoute.addChildren([indexRoute, marketRoute, nftRoute, cartRoute, checkoutRoute, profileRoute])
+const routeTree = rootRoute.addChildren([indexRoute, marketRoute, nftRoute, cartRoute, checkoutRoute, orderRoute, profileRoute])
 
 export function createAppRouter(queryClient: QueryClient) {
   return createRouter({
