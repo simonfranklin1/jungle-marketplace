@@ -118,7 +118,7 @@ Os cenários são determinísticos e ficam salvos até serem trocados:
 | `e2e/12-loading.spec.ts` | Skeletons, falha e recuperação após retry |
 | `e2e/visual.spec.ts` | Home, Detalhe, Carrinho e Pagamento (baselines em `e2e/__screenshots__`) |
 
-Cada teste roda num contexto isolado (Service Worker, `localStorage` e banco do mock zerados). O ticker do "mercado ao vivo" é desligado nos testes; eventos são disparados pelo backend simulado e chegam ao app pelo `socket.io-client`. Relatório HTML em `playwright-report/`, traces e vídeos de falhas em `test-results/`.
+Cada teste roda num contexto isolado (Service Worker, `localStorage` e banco do mock zerados). O ticker do "mercado ao vivo" é desligado nos testes; eventos são disparados pelo backend simulado e chegam ao app pelo `socket.io-client`. O relatório HTML do último run completo (53/53) está versionado em `playwright-report/` (abra com `npm run test:e2e:report`); traces e vídeos de falhas são gravados em `test-results/` quando algum teste falha.
 
 ## Performance (Lighthouse)
 

@@ -24,7 +24,7 @@ dist-ssr
 *.sw?
 
 # testes / auditorias
-playwright-report
+# playwright-report é versionado: relatório HTML do último run completo (entregável do desafio)
 test-results
 blob-report
 .lighthouseci
