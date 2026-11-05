@@ -1,6 +1,7 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useRouterState } from '@tanstack/react-router'
 import { HeartIcon, HouseIcon, ShoppingCartIcon, UserIcon } from 'lucide-react'
 import { useCartCount } from '@/features/cart/use-cart'
+import { FOCUSED_MOBILE_ROUTES } from '@/lib/mobile-routes'
 import { comingSoon } from '@/lib/coming-soon'
 import { ScanLineIcon } from '../figma-icons'
 
@@ -18,6 +19,8 @@ const item =
 
 export function MobileNav() {
   const count = useCartCount()
+  const path = useRouterState({ select: (s) => s.location.pathname })
+  if (FOCUSED_MOBILE_ROUTES.test(path)) return null
   return (
     <nav
       aria-label="Navegação inferior"

@@ -17,8 +17,14 @@ export function AuthDialog() {
   const { open, mode, reason } = useAuthDialog()
   return (
     <Dialog open={open} onOpenChange={(o) => (o ? null : authDialog.close())}>
-      <DialogContent className="max-h-[92vh] overflow-y-auto border-b-8 border-primary bg-card px-6 py-8 sm:max-w-md sm:px-10">
-        <div className="flex items-center justify-center gap-3 text-lg font-semibold" role="tablist" aria-label="Tipo de acesso">
+      <DialogContent className="max-h-[92vh] overflow-y-auto border-b-8 border-primary bg-card px-6 py-8 sm:max-w-md sm:px-10 max-md:top-0 max-md:left-0 max-md:h-dvh max-md:max-h-none max-md:w-full max-md:max-w-none max-md:translate-x-0 max-md:translate-y-0 max-md:content-start max-md:rounded-none max-md:border-b-0 max-md:bg-background max-md:px-7 max-md:pt-16">
+        <p className="text-center text-2xl font-bold tracking-[0.25em] md:hidden" aria-hidden>
+          KURIO
+        </p>
+        <p className="mt-6 text-center text-lg font-bold md:hidden" aria-hidden>
+          {mode === 'login' ? 'Entrar' : 'Criar perfil de colecionador'}
+        </p>
+        <div className="flex items-center justify-center gap-3 text-lg font-semibold max-md:hidden" role="tablist" aria-label="Tipo de acesso">
           <ModeTab mode="login" current={mode} label="Entrar" />
           <span aria-hidden className="h-6 w-px bg-primary" />
           <ModeTab mode="signup" current={mode} label="Criar conta" />
@@ -30,7 +36,7 @@ export function AuthDialog() {
         {mode === 'login' ? <LoginForm key="login" /> : <SignupForm key="signup" />}
         <div className="relative my-2 text-center text-xs">
           <span className="absolute inset-x-0 top-1/2 h-px bg-border" aria-hidden />
-          <span className="relative bg-card px-3">Ou continue com</span>
+          <span className="relative bg-card px-3 max-md:bg-background">Ou continue com</span>
         </div>
         <div className="grid gap-3">
           <button type="button" onClick={() => comingSoon('Login com Google')} className={socialBtn}>
@@ -40,6 +46,17 @@ export function AuthDialog() {
             <FacebookColorIcon className="size-5 shrink-0" /> Continuar com Facebook
           </button>
         </div>
+        <p className="mt-4 text-center text-sm md:hidden">
+          {mode === 'login' ? (
+            <button type="button" onClick={() => authDialog.setMode('signup')} className="hover:text-primary">
+              Novo na Kurio? Crie uma conta
+            </button>
+          ) : (
+            <button type="button" onClick={() => authDialog.setMode('login')} className="hover:text-primary">
+              Já tem uma conta? Entre
+            </button>
+          )}
+        </p>
       </DialogContent>
     </Dialog>
   )

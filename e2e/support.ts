@@ -66,7 +66,8 @@ export class App {
   async loginUI(user = DEMO) {
     const desktop = (this.page.viewportSize()?.width ?? 1440) >= 768
     if (desktop) await this.page.locator('header').getByRole('button', { name: 'Entrar' }).click()
-    else await this.page.getByRole('navigation', { name: 'Navegação inferior' }).getByRole('link', { name: 'Meu perfil' }).click()
+    // no mobile não há botão Entrar: a rota protegida /perfil abre o login (algumas telas não têm a barra inferior)
+    else await this.page.goto('/perfil')
     const dialog = this.page.getByRole('dialog')
     await dialog.getByLabel('E-mail').fill(user.email)
     await dialog.getByLabel('Senha', { exact: true }).fill(user.password)

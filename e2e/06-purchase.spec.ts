@@ -5,7 +5,7 @@ test('compra completa do catálogo até o recibo confirmado @mobile', async ({ a
   await app.goto('/mercado')
   await page.locator('#catalogo article').filter({ hasText: 'Golden Beat #207' }).getByRole('link').click()
   await expect(page.getByRole('heading', { level: 1, name: 'Golden Beat #207' })).toBeVisible()
-  await page.getByRole('button', { name: 'COMPRAR', exact: true }).click()
+  await page.getByRole('button', { name: /^(COMPRAR|Comprar NFT)$/ }).click()
   await app.goto('/carrinho')
   await expect(page.locator('aside dl')).toContainText('1.006 ETH') // 0.99 + 0.016
 

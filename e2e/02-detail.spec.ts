@@ -5,18 +5,18 @@ test.describe('Detalhe do NFT', () => {
   test('acesso direto mostra dados do NFT e respeita o limite de quantidade @mobile', async ({ app, page }) => {
     await app.goto('/nft/emerald-ape-042')
     await expect(page.getByRole('heading', { level: 1, name: 'Emerald Ape #042' })).toBeVisible()
-    await expect(page.getByText('1.19 ETH').first()).toBeVisible()
+    await expect(page.getByText('1.19 ETH').filter({ visible: true }).first()).toBeVisible()
 
     // edição 1/1: só 1 por pedido
     await page.locator('label').filter({ hasText: /^1\/1$/ }).click()
     await expect(page.getByRole('button', { name: 'Aumentar quantidade' })).toBeDisabled()
-    await expect(page.getByText('Máximo de 1 por pedido')).toBeVisible()
+    await expect(page.getByText('Máximo de 1 por pedido').filter({ visible: true })).toBeVisible()
 
     // edição 1/50: limite de 10 por pedido
     await page.locator('label').filter({ hasText: /^1\/50$/ }).click()
     const plus = page.getByRole('button', { name: 'Aumentar quantidade' })
     for (let i = 0; i < 12; i++) if (await plus.isEnabled()) await plus.click()
-    await expect(page.getByLabel('Quantidade selecionada')).toHaveText('10')
+    await expect(page.getByLabel('Quantidade selecionada').filter({ visible: true })).toHaveText('10')
   })
 
   test('NFT inexistente e rota inexistente mostram 404', async ({ app, page }) => {

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useRouterState } from '@tanstack/react-router'
+import { FOCUSED_MOBILE_ROUTES } from '@/lib/mobile-routes'
 import { toast } from 'sonner'
 import { FacebookIcon, InstagramIcon, LinkedinIcon, TwitterIcon } from '@/components/brand-icons'
 import { YoutubeFigmaIcon } from '@/components/figma-icons'
@@ -39,8 +40,10 @@ export function WalletsBadge() {
 }
 
 export function Footer() {
+  const path = useRouterState({ select: (s) => s.location.pathname })
+  const focused = FOCUSED_MOBILE_ROUTES.test(path)
   return (
-    <footer className="container-k mt-20 pb-32 md:pb-6">
+    <footer className={`container-k mt-20 pb-32 md:pb-6 ${focused ? 'max-md:hidden' : ''}`}>
       <div className="bg-card">
         <div className="grid gap-8 p-6 md:grid-cols-2 md:p-8 lg:grid-cols-4">
           {FEATURES.map((f) => (

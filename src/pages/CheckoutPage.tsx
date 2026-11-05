@@ -126,6 +126,8 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
   const [wallet, setWallet] = useState<WalletState>({ status: 'idle' })
   const [phase, setPhase] = useState<Phase>('idle')
   const [alert, setAlert] = useState<{ tone: 'error' | 'info'; text: string; kind?: 'validation' } | null>(null)
+  // mobile (frame "Pagamento com carteira"): os dados do colecionador vêm do perfil e ficam recolhidos
+  const [showData, setShowData] = useState(false)
   const attempt = useRef<{ fp: string; key: string } | null>(null)
 
   const network = (values.network || 'ethereum') as Network
@@ -176,6 +178,7 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
     setErrors(errs)
     if (Object.keys(errs).length) {
       setAlert({ tone: 'error', text: '', kind: 'validation' })
+      setShowData(true)
       requestAnimationFrame(() => (document.querySelector('[aria-invalid="true"]') as HTMLElement | null)?.focus())
       return
     }
@@ -289,7 +292,7 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
 
   return (
     <div className="container-k pt-6">
-      <nav aria-label="Trilha de navegação" className="text-sm font-semibold">
+      <nav aria-label="Trilha de navegação" className="text-sm font-semibold max-md:hidden">
         <Link to="/" className="hover:text-primary">Início</Link> /{' '}
         <Link to="/mercado" className="hover:text-primary">Mercado</Link> /{' '}
         <Link to="/carrinho" className="hover:text-primary">Carrinho</Link> / <span aria-current="page">Pagamento</span>
@@ -297,7 +300,21 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
       <h1 className="sr-only">Pagamento</h1>
 
       <form noValidate onSubmit={submit} className="mt-5 grid gap-10 lg:grid-cols-[minmax(0,1fr)_420px]">
-        <fieldset disabled={busy} className="min-w-0">
+        <div className="min-w-0">
+        <button
+          type="button"
+          onClick={() => setShowData((v) => !v)}
+          aria-expanded={showData}
+          aria-controls="collector-data"
+          className="mb-2 flex w-full items-center justify-between rounded-[16px] bg-card px-4 py-3 text-left text-sm md:hidden"
+        >
+          <span>
+            <span className="block font-bold">Dados do colecionador</span>
+            <span className="text-xs text-muted-foreground">Preenchidos a partir do seu perfil</span>
+          </span>
+          <span className="text-xs text-primary">{showData ? 'Ocultar' : 'Editar'}</span>
+        </button>
+        <fieldset id="collector-data" disabled={busy} className={cn('min-w-0', !showData && 'max-md:hidden')}>
           <legend className="mb-4 text-lg font-bold">Perfil do colecionador</legend>
           <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
             <Field id={`${uid}-dn`} label="Nome de exibição" required error={errors.displayName}>
@@ -387,6 +404,7 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
             </Field>
           </div>
         </fieldset>
+        </div>
 
         <aside aria-labelledby="your-nfts" className="lg:sticky lg:top-20 lg:self-start">
           <h2 id="your-nfts" className="text-lg font-bold">
@@ -490,7 +508,7 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
             type="submit"
             disabled={busy || !quote.data || quote.isFetching}
             aria-busy={busy}
-            className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[8px] bg-primary font-semibold text-primary-foreground hover:bg-primary/85 disabled:opacity-60"
+            className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[8px] bg-primary font-semibold text-primary-foreground hover:bg-primary/85 disabled:opacity-60 max-md:h-14 max-md:rounded-full max-md:bg-gradient-to-b max-md:from-[#e09a5c] max-md:to-primary"
           >
             {busy && <Loader2Icon className="size-4 animate-spin" aria-hidden />}
             Confirmar compra

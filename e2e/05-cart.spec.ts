@@ -4,15 +4,15 @@ import { DEMO, expect, test } from './support'
 test.describe('Carrinho', () => {
   test('visitante: quantidade, cupom, remoção e persistência; itens mantidos após login @mobile', async ({ app, page }) => {
     await app.goto('/nft/emerald-ape-042')
-    await page.getByRole('button', { name: 'COMPRAR', exact: true }).click()
+    await page.getByRole('button', { name: /^(COMPRAR|Comprar NFT)$/ }).click()
     await expect(app.toast('Emerald Ape #042 (1/50) adicionado ao carrinho.')).toBeVisible()
     await app.goto('/nft/violet-nomad-314')
-    await page.getByRole('button', { name: 'COMPRAR', exact: true }).click()
+    await page.getByRole('button', { name: /^(COMPRAR|Comprar NFT)$/ }).click()
 
     await app.goto('/carrinho')
     const rowEmerald = page.locator('section[aria-labelledby=cart-items] li').filter({ hasText: 'Emerald Ape #042' })
     await rowEmerald.getByRole('button', { name: 'Aumentar quantidade' }).click()
-    await expect(rowEmerald.locator('output')).toHaveText('2')
+    await expect(rowEmerald.locator('output:visible')).toHaveText('2')
     const summary = page.locator('aside dl')
     // 1.19 x 2 + 1.39 = 3.77; taxa 0.016
     await expect(summary).toContainText('3.77 ETH')
@@ -37,14 +37,14 @@ test.describe('Carrinho', () => {
 
     // refresh mantém carrinho e cupom
     await page.reload()
-    await expect(rowEmerald.locator('output')).toHaveText('2')
+    await expect(rowEmerald.locator('output:visible')).toHaveText('2')
     await expect(page.getByText('KURIO10')).toBeVisible()
 
     // login mescla o carrinho de visitante ao da conta
     await app.loginUI(DEMO)
     await expect(app.toast('Os itens do seu carrinho foram mantidos.')).toBeVisible()
     await app.goto('/carrinho') // no mobile o login passa pela rota /perfil
-    await expect(rowEmerald.locator('output')).toHaveText('2')
+    await expect(rowEmerald.locator('output:visible')).toHaveText('2')
   })
 
   test('remover cupom recalcula o total', async ({ app, page }) => {

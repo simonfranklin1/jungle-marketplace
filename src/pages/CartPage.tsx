@@ -31,8 +31,8 @@ export function CartPage() {
   }
 
   return (
-    <div className="container-k pt-6">
-      <nav aria-label="Trilha de navegação" className="text-sm font-semibold">
+    <div className="container-k pt-2 md:pt-6">
+      <nav aria-label="Trilha de navegação" className="text-sm font-semibold max-md:hidden">
         <Link to="/" className="hover:text-primary">
           Início
         </Link>{' '}
@@ -73,7 +73,7 @@ export function CartPage() {
                 </button>
               </div>
             )}
-            <ul className="mt-3 space-y-3" aria-busy={quote.isFetching}>
+            <ul className="mt-3 space-y-5 md:space-y-3" aria-busy={quote.isFetching}>
               {cart.isLoading || (quote.isPending && cart.items.length > 0)
                 ? cart.items.map((i) => <li key={`${i.nftId}-${i.editionId}`} className="shimmer h-20 rounded-sm" aria-hidden />)
                 : lines.map((line) => (
@@ -106,8 +106,8 @@ export function CartPage() {
               ))}
           </section>
 
-          <aside aria-labelledby="summary-title" className="lg:sticky lg:top-20 lg:self-start">
-            <h2 id="summary-title" className="border-b border-border pb-2 text-lg font-bold">
+          <aside aria-labelledby="summary-title" className="max-md:-mx-6 max-md:rounded-t-[32px] max-md:bg-[#1c110d] max-md:px-6 max-md:pt-6 max-md:pb-8 lg:sticky lg:top-20 lg:self-start">
+            <h2 id="summary-title" className="border-b border-border pb-2 text-lg font-bold max-md:sr-only">
               Resumo da carteira
             </h2>
             <CouponBox coupon={cart.coupon} onApply={cart.setCoupon} items={cart.items} quote={quote.data} />
@@ -121,18 +121,20 @@ export function CartPage() {
               type="button"
               onClick={goCheckout}
               disabled={blocking || !quote.data || quote.isFetching || cart.isSaving}
-              className="mt-5 h-10 w-full rounded-sm bg-primary font-semibold text-primary-foreground hover:bg-primary/85 disabled:opacity-50"
+              className="mt-5 h-10 w-full rounded-sm bg-primary font-semibold text-primary-foreground hover:bg-primary/85 disabled:opacity-50 max-md:h-14 max-md:rounded-full max-md:bg-gradient-to-b max-md:from-[#e09a5c] max-md:to-primary"
             >
               Conectar e finalizar
             </button>
-            <Link to="/mercado" className="mt-4 block text-center text-sm text-primary hover:underline">
+            <Link to="/mercado" className="mt-4 block text-center text-sm text-primary hover:underline max-md:hidden">
               Continuar explorando
             </Link>
           </aside>
         </div>
       )}
 
+      <div className="max-md:hidden">
       <RelatedCarousel nftId={cart.items[0]?.nftId ?? 'emerald-ape-042'} title="Colecionadores também viram" />
+      </div>
     </div>
   )
 }
@@ -172,8 +174,56 @@ function CartRow({
   const max = Math.max(line.available, 0)
   const unavailable = issue?.type === 'UNAVAILABLE'
   return (
-    <li className={cn('bg-card', unavailable && 'ring-1 ring-destructive/60')}>
-      <div className="grid grid-cols-[64px_minmax(0,1fr)] items-center gap-3 md:grid-cols-[minmax(0,2.2fr)_1fr_1.2fr_1fr_40px]">
+    <li className={cn('bg-card max-md:overflow-hidden max-md:rounded-[16px]', unavailable && 'ring-1 ring-destructive/60')}>
+      <div className="flex h-[100px] md:hidden">
+        <img src={line.thumb} alt="" width={100} height={100} className="size-[100px] shrink-0 object-cover" />
+        <div className="flex min-w-0 flex-1 items-center justify-between gap-2 py-3 pr-3 pl-3">
+          <div className="min-w-0">
+            <Link to="/nft/$nftId" params={{ nftId: line.nftId }} className="block truncate text-sm font-bold hover:text-primary">
+              {line.name}
+            </Link>
+            <p className="mt-1 text-xs text-muted-foreground">Edição: {line.editionLabel}</p>
+            <p className="mt-3 text-base font-bold text-price">
+              <span className="sr-only">Total do item: </span>
+              {formatEth(line.lineTotalEth)}
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            <button
+              type="button"
+              onClick={onRemove}
+              className="grid size-7 place-items-center rounded-sm text-primary"
+              aria-label={`Remover ${line.name} do carrinho`}
+            >
+              <Trash2Icon className="size-4" aria-hidden />
+            </button>
+            <div className="flex items-center gap-2" role="group" aria-label={`Quantidade de ${line.name}`}>
+              <button
+                type="button"
+                onClick={() => onQty(line.quantity - 1)}
+                disabled={line.quantity <= 1}
+                className="grid size-6 place-items-center rounded-full bg-secondary text-foreground disabled:opacity-40"
+                aria-label="Diminuir quantidade"
+              >
+                <MinusIcon className="size-3.5" aria-hidden />
+              </button>
+              <output className="w-4 text-center text-sm" aria-live="polite">
+                {line.quantity}
+              </output>
+              <button
+                type="button"
+                onClick={() => onQty(line.quantity + 1)}
+                disabled={line.quantity >= max}
+                className="grid size-6 place-items-center rounded-full bg-secondary text-foreground disabled:opacity-40"
+                aria-label="Aumentar quantidade"
+              >
+                <PlusIcon className="size-3.5" aria-hidden />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="hidden grid-cols-[64px_minmax(0,1fr)] items-center gap-3 md:grid md:grid-cols-[minmax(0,2.2fr)_1fr_1.2fr_1fr_40px]">
         <div className="col-span-1 flex items-center gap-4 md:col-span-1">
           <img src={line.thumb} alt="" width={80} height={80} className="size-16 shrink-0 object-cover md:size-20" />
           <div className="hidden min-w-0 md:block">
@@ -308,10 +358,10 @@ function CouponBox({
             validate.mutate(code.trim())
           }}
         >
-          <label htmlFor="coupon" className="text-sm font-semibold">
+          <label htmlFor="coupon" className="text-sm font-semibold max-md:sr-only">
             Código promocional
           </label>
-          <div className="mt-2 flex">
+          <div className="relative mt-2 flex">
             <input
               id="coupon"
               value={code}
@@ -319,12 +369,12 @@ function CouponBox({
               placeholder="Digite o código promocional..."
               aria-invalid={!!error}
               aria-describedby={error ? 'coupon-error' : 'coupon-hint'}
-              className="h-11 min-w-0 flex-1 rounded-l-sm border border-primary/60 bg-background px-3 text-sm uppercase placeholder:normal-case placeholder:text-muted-foreground aria-invalid:border-destructive"
+              className="h-11 min-w-0 flex-1 rounded-l-sm border border-primary/60 max-md:rounded-full max-md:border-border max-md:pr-28 bg-background px-3 text-sm uppercase placeholder:normal-case placeholder:text-muted-foreground aria-invalid:border-destructive"
             />
             <button
               type="submit"
               disabled={validate.isPending}
-              className="inline-flex h-11 items-center gap-1 rounded-l-none rounded-r-[3px] bg-primary px-5 font-semibold text-primary-foreground disabled:opacity-60"
+              className="inline-flex h-11 items-center gap-1 rounded-l-none rounded-r-[3px] bg-primary px-5 max-md:absolute max-md:top-1 max-md:right-1 max-md:h-9 max-md:rounded-full font-semibold text-primary-foreground disabled:opacity-60"
             >
               {validate.isPending && <Loader2Icon className="size-4 animate-spin" aria-hidden />}
               Aplicar
@@ -335,7 +385,7 @@ function CouponBox({
               {error}
             </p>
           ) : (
-            <p id="coupon-hint" className="mt-1 text-xs text-muted-foreground">
+            <p id="coupon-hint" className="mt-1 text-xs text-muted-foreground max-md:sr-only">
               Experimente KURIO10.
             </p>
           )}

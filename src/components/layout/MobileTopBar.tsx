@@ -16,7 +16,7 @@ const TITLES: Array<[RegExp, string]> = [
 export function MobileTopBar() {
   const router = useRouter()
   const path = useRouterState({ select: (s) => s.location.pathname })
-  if (path === '/') return null
+  if (path === '/' || path.startsWith('/nft/')) return null
   const title = TITLES.find(([re]) => re.test(path))?.[1] ?? ''
   return (
     <div className="sticky top-0 z-40 flex h-14 items-center gap-3 bg-background/95 px-4 backdrop-blur md:hidden">

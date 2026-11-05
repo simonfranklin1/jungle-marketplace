@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate, useRouter } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { HeartIcon, MailIcon, MinusIcon, PlusIcon, SearchIcon, StarIcon } from 'lucide-react'
+import { ChevronLeftIcon, HeartIcon, MailIcon, MinusIcon, PlusIcon, SearchIcon, ShoppingCartIcon, StarIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { nftDetailQuery } from '@/api/nfts'
 import { isApiError } from '@/api/client'
@@ -78,13 +78,25 @@ function NftDetail({ nft }: { nft: Nft }) {
   const effectiveQty = Math.max(1, Math.min(qty, maxQty || 1))
   const networkLabel = NETWORKS.find((n) => n.id === nft.network)?.label ?? nft.network
   const shareUrl = typeof window !== 'undefined' ? window.location.href : ''
+  const router = useRouter()
+
+  const addToCart = () => {
+    const res = cart.add({ nftId: nft.id, editionId: edition.id, quantity: effectiveQty }, maxQty)
+    if (res.capped) toast.warning(`Limite atingido: você já tem ${res.quantity} desta edição no carrinho.`)
+    else
+      toast.success(`${nft.name} (${edition.label}) adicionado ao carrinho.`, {
+        action: { label: 'Ver carrinho', onClick: () => navigate({ to: '/carrinho' }) },
+      })
+  }
 
   return (
-    <div className="container-k pt-6">
-      <Breadcrumb />
+    <div className="container-k pt-4 max-md:min-h-screen max-md:bg-card max-md:pb-[190px] md:pt-6">
+      <div className="hidden md:block">
+        <Breadcrumb />
+      </div>
       <div className="mt-3 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div className="flex flex-col-reverse gap-4 sm:flex-row">
-          <ul className="flex gap-3 sm:flex-col" aria-label="Miniaturas">
+          <ul className="hidden gap-3 md:flex md:flex-col" aria-label="Miniaturas">
             {[0, 1, 2, 3].map((i) => (
               <li key={i}>
                 <button
@@ -98,7 +110,26 @@ function NftDetail({ nft }: { nft: Nft }) {
               </li>
             ))}
           </ul>
-          <div className="relative flex-1 bg-card p-4">
+          <div className="relative flex-1 md:bg-card md:p-4">
+            <div className="mb-4 flex justify-between md:hidden">
+              <button
+                type="button"
+                onClick={() => (window.history.length > 1 ? router.history.back() : router.navigate({ to: '/' }))}
+                className="grid size-9 place-items-center rounded-full border border-border text-foreground"
+                aria-label="Voltar"
+              >
+                <ChevronLeftIcon className="size-5" aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => favorites.toggle(nft.id)}
+                aria-pressed={isFav}
+                aria-label={isFav ? 'Remover dos favoritos' : 'Favoritar'}
+                className="grid size-9 place-items-center rounded-full border border-border text-primary"
+              >
+                <HeartIcon className={cn('size-4', isFav && 'fill-current')} aria-hidden />
+              </button>
+            </div>
             <img
               src={nft.image}
               alt={`Arte do NFT ${nft.name}`}
@@ -110,7 +141,7 @@ function NftDetail({ nft }: { nft: Nft }) {
             <button
               type="button"
               onClick={() => setZoom(true)}
-              className="absolute top-2 right-2 grid size-9 place-items-center rounded-full bg-background/90 hover:text-primary"
+              className="absolute top-2 right-2 hidden size-9 place-items-center rounded-full bg-background/90 hover:text-primary md:grid"
               aria-label="Ampliar imagem"
             >
               <SearchIcon className="size-5" aria-hidden />
@@ -118,10 +149,10 @@ function NftDetail({ nft }: { nft: Nft }) {
           </div>
         </div>
 
-        <div>
+        <div className="relative max-md:-mx-6 max-md:-mt-28 max-md:rounded-t-[32px] max-md:bg-[#1c110d] max-md:px-6 max-md:pt-8 max-md:pb-6">
           <h1 className="text-[20px] leading-4 font-bold md:text-[28px] md:leading-normal">{nft.name}</h1>
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
-            <p className="text-xl font-bold text-price md:text-2xl" aria-live="polite">
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2 max-md:absolute max-md:top-[26px] max-md:right-6 max-md:mt-0 md:border-b md:border-border md:pb-3">
+            <p className="hidden text-xl font-bold text-price md:block md:text-2xl" aria-live="polite">
               {formatEth(nft.priceEth)}
               {nft.previousPriceEth && (
                 <s className="ml-2 text-base font-normal text-subtle">
@@ -130,20 +161,26 @@ function NftDetail({ nft }: { nft: Nft }) {
                 </s>
               )}
             </p>
-            <p className="flex items-center gap-1 text-sm">
-              <span className="flex text-primary" aria-hidden>
+            <p className="flex items-center gap-1 text-sm max-md:rounded-full max-md:border max-md:border-primary/60 max-md:px-2 max-md:py-0.5 max-md:text-xs">
+              <span className="flex items-center text-primary md:hidden" aria-hidden>
+                <StarIcon className="size-3 fill-current" />
+              </span>
+              <span className="text-foreground md:hidden" aria-hidden>
+                {nft.rating.toFixed(1)} ({nft.reviewsCount})
+              </span>
+              <span className="hidden text-primary md:flex" aria-hidden>
                 {Array.from({ length: 5 }, (_, i) => (
                   <StarIcon key={i} className={cn('size-3.5', i < Math.round(nft.rating) && 'fill-current')} />
                 ))}
               </span>
-              <span>
+              <span className="max-md:sr-only">
                 <span className="sr-only">Nota {nft.rating.toFixed(1)} de 5, </span>
                 {nft.reviewsCount} avaliações de colecionadores
               </span>
             </p>
           </div>
 
-          <h2 className="mt-4 text-sm font-bold">Sobre este NFT:</h2>
+          <h2 className="mt-4 text-sm font-bold max-md:sr-only">Sobre este NFT:</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">{nft.description}</p>
 
           <fieldset className="mt-4">
@@ -186,7 +223,7 @@ function NftDetail({ nft }: { nft: Nft }) {
             </p>
           </fieldset>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="mt-4 hidden flex-wrap items-center justify-between gap-4 md:flex">
             <div className="flex items-center gap-3" role="group" aria-label="Quantidade">
               <button
                 type="button"
@@ -217,14 +254,7 @@ function NftDetail({ nft }: { nft: Nft }) {
               <button
                 type="button"
                 disabled={soldOut || edition.available === 0}
-                onClick={() => {
-                  const res = cart.add({ nftId: nft.id, editionId: edition.id, quantity: effectiveQty }, maxQty)
-                  if (res.capped) toast.warning(`Limite atingido: você já tem ${res.quantity} desta edição no carrinho.`)
-                  else
-                    toast.success(`${nft.name} (${edition.label}) adicionado ao carrinho.`, {
-                      action: { label: 'Ver carrinho', onClick: () => navigate({ to: '/carrinho' }) },
-                    })
-                }}
+                onClick={addToCart}
                 className="h-9 rounded-[6px] bg-primary px-8 text-sm font-bold text-primary-foreground hover:bg-primary/85 disabled:opacity-40"
               >
                 {soldOut ? 'ESGOTADO' : 'COMPRAR'}
@@ -255,7 +285,7 @@ function NftDetail({ nft }: { nft: Nft }) {
               <dd className="inline">{nft.attributes.join(', ')}</dd>
             </div>
           </dl>
-          <div className="mt-3 flex items-center gap-3 text-sm font-bold">
+          <div className="mt-3 flex items-center gap-3 text-sm font-bold max-md:hidden">
             Compartilhar este NFT:
             <a
               href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
@@ -286,7 +316,7 @@ function NftDetail({ nft }: { nft: Nft }) {
         </div>
       </div>
 
-      <section className="mt-14">
+      <section className="mt-14 max-md:hidden">
         <div role="tablist" aria-label="Informações do NFT" className="flex gap-8 border-b border-border">
           {(
             [
@@ -346,7 +376,62 @@ function NftDetail({ nft }: { nft: Nft }) {
         )}
       </section>
 
-      <RelatedCarousel nftId={nft.id} title="Mais desta coleção" />
+      <div className="max-md:hidden">
+        <RelatedCarousel nftId={nft.id} title="Mais desta coleção" />
+      </div>
+
+      {/* Barra de compra fixa do frame mobile ("Buy Bar", 164px) */}
+      <div className="fixed inset-x-0 bottom-0 z-40 rounded-t-[32px] bg-[#1c110d] px-6 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-[0_-10px_30px_rgba(10,6,4,0.45)] md:hidden">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3" role="group" aria-label="Quantidade">
+            <span className="text-sm text-muted-foreground">Qtd.</span>
+            <button
+              type="button"
+              onClick={() => setQty(effectiveQty - 1)}
+              disabled={effectiveQty <= 1 || soldOut}
+              className="grid size-7 place-items-center rounded-full bg-primary text-primary-foreground disabled:opacity-40"
+              aria-label="Diminuir quantidade"
+            >
+              <MinusIcon className="size-3.5" aria-hidden />
+            </button>
+            <output aria-live="polite" aria-label="Quantidade selecionada" className="w-5 text-center">
+              {effectiveQty}
+            </output>
+            <button
+              type="button"
+              onClick={() => setQty(effectiveQty + 1)}
+              disabled={effectiveQty >= maxQty || soldOut}
+              className="grid size-7 place-items-center rounded-full bg-primary text-primary-foreground disabled:opacity-40"
+              aria-label="Aumentar quantidade"
+            >
+              <PlusIcon className="size-3.5" aria-hidden />
+            </button>
+          </div>
+          <p className="text-xl font-bold text-price" aria-live="polite">
+            {formatEth(nft.priceEth)}
+          </p>
+        </div>
+        <p className="mt-1 h-4 text-[11px] text-muted-foreground">
+          {maxQty > 0 && effectiveQty >= maxQty ? `Máximo de ${maxQty} por pedido` : ''}
+        </p>
+        <div className="mt-2 flex items-center gap-4">
+          <button
+            type="button"
+            disabled={soldOut || edition.available === 0}
+            onClick={addToCart}
+            className="h-14 w-[180px] max-w-[60%] rounded-full bg-gradient-to-b from-[#e09a5c] to-primary text-base font-bold text-primary-foreground disabled:opacity-40"
+          >
+            {soldOut ? 'Esgotado' : 'Comprar NFT'}
+          </button>
+          <Link
+            to="/carrinho"
+            className="grid size-14 place-items-center rounded-full bg-card text-primary"
+            aria-label="Ver carrinho"
+          >
+            <ShoppingCartIcon className="size-6" aria-hidden />
+          </Link>
+        </div>
+      </div>
 
       <Dialog open={zoom} onOpenChange={setZoom}>
         <DialogContent className="max-w-[min(92vw,720px)] bg-card p-3 sm:max-w-[min(92vw,720px)]">

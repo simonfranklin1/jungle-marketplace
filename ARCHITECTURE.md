@@ -129,6 +129,8 @@ Após conectar, o cliente envia `auth` com o token (e reenvia no login/logout/tr
 ## Desvios do Figma
 
 - **Mobile sem header global:** como nos frames mobile; o login no mobile é aberto pelo ícone de Perfil da barra inferior (rota protegida). Páginas internas ganham uma barra com "voltar" e título.
+- **Detalhe, carrinho e pagamento no mobile** seguem os frames: sem barra inferior nem rodapé; o detalhe tem barra de compra fixa (Qtd., preço, "Comprar NFT" e atalho do carrinho); o carrinho usa cards de item e painel de resumo. No **pagamento mobile** o frame mostra só a escolha de carteira: os dados do colecionador (pré-preenchidos pelo perfil) ficam recolhidos em "Dados do colecionador" e abrem automaticamente se a validação apontar erro.
+- **Login e cadastro no mobile** aparecem em tela cheia (como os frames), usando o mesmo componente que no desktop é um modal — mantém o retorno ao fluxo anterior e o foco controlado.
 - **Código de indicação** é opcional no pagamento e nas carteiras (no Figma aparece como obrigatório; não há regra de negócio que o exija).
 - **"Ordenar por"** no mobile fica dentro da gaveta de filtros (o frame não mostra o controle).
 - **"Ver no Etherscan"** avisa que a transação é simulada, em vez de abrir um link inexistente.
