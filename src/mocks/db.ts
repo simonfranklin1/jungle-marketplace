@@ -70,6 +70,19 @@ function load(): DbState {
 
 export let db: DbState = load()
 
+/** Relê o banco do localStorage (outra aba pode ter gravado: ex. login feito em outra aba). */
+export function reloadDb() {
+  db = load()
+}
+
+// Cada aba roda o seu MSW com uma cópia do banco em memória. Quando outra aba grava (persist),
+// recarregamos, para que sessões, carrinho e pedidos fiquem consistentes entre abas.
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (e) => {
+    if (e.key === KEY) reloadDb()
+  })
+}
+
 export function persist() {
   try {
     localStorage.setItem(KEY, JSON.stringify(db))

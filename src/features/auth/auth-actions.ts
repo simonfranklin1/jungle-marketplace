@@ -55,8 +55,12 @@ export async function logout() {
 }
 
 let expiredNotified = false
-function handleAuthFailure(code: ApiErrorCode) {
-  if (!sessionStore.get()) return
+function handleAuthFailure(code: ApiErrorCode, failedToken?: string) {
+  const current = sessionStore.get()
+  if (!current) return
+  // um 401 atrasado de um token antigo (ex.: validação da sessão salva respondendo depois de um
+  // novo login) não pode derrubar a sessão atual
+  if (failedToken && failedToken !== current.token) return
   sessionStore.set(null)
   clearPrivateCache()
   if (!expiredNotified) {
@@ -75,7 +79,10 @@ export function bootstrapAuth() {
   if (saved) {
     api
       .get<Session>('/auth/session')
-      .then(({ data }) => sessionStore.set(data))
+      // só aplica se a sessão ainda é a mesma que foi validada (o usuário pode ter trocado de conta)
+      .then(({ data }) => {
+        if (sessionStore.token() === saved.token) sessionStore.set(data)
+      })
       .catch(() => {
         /* 401 já tratado pelo interceptor */
       })

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { toast } from 'sonner'
-import { FacebookIcon, InstagramIcon, LinkedinIcon, TwitterIcon, YoutubeIcon } from '@/components/brand-icons'
+import { FacebookIcon, InstagramIcon, LinkedinIcon, TwitterIcon } from '@/components/brand-icons'
+import { YoutubeFigmaIcon } from '@/components/figma-icons'
 import { comingSoon } from '@/lib/coming-soon'
 import { useRealtimeStatus } from '@/features/realtime/realtime-client'
 
@@ -16,7 +17,7 @@ const SOCIAL = [
   { label: 'Instagram', href: 'https://www.instagram.com', Icon: InstagramIcon },
   { label: 'X (Twitter)', href: 'https://x.com', Icon: TwitterIcon },
   { label: 'LinkedIn', href: 'https://www.linkedin.com', Icon: LinkedinIcon },
-  { label: 'YouTube', href: 'https://www.youtube.com', Icon: YoutubeIcon },
+  { label: 'YouTube', href: 'https://www.youtube.com', Icon: YoutubeFigmaIcon },
 ]
 
 const linkCls = 'text-sm text-foreground/90 hover:text-primary'

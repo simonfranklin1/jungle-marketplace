@@ -90,3 +90,23 @@ test.describe('Conta e sessão', () => {
     await expect(page.getByText('Nenhum NFT favoritado ainda')).toBeVisible()
   })
 })
+
+test('login em uma aba não é desfeito por outra aba aberta (banco do mock sincronizado)', async ({ app, page, context }) => {
+  await app.goto('/')
+  // segunda aba aberta antes do login, com o seu próprio MSW e cópia do banco
+  const other = await context.newPage()
+  await other.goto('/mercado')
+  await expect(other.locator('#conteudo')).toBeVisible()
+
+  await app.loginUI(DEMO)
+  await expect(page.locator('header').getByRole('link', { name: /Meu perfil/ })).toBeVisible()
+
+  // a outra aba recebe a sessão e faz requisições autenticadas com ela
+  await other.goto('/perfil')
+  await expect(other.getByRole('heading', { name: 'Perfil do colecionador' })).toBeVisible()
+
+  // as duas continuam logadas
+  await page.waitForTimeout(1500)
+  await expect(page.locator('header').getByRole('link', { name: /Meu perfil/ })).toBeVisible()
+  await expect(other.locator('header').getByRole('link', { name: /Meu perfil/ })).toBeVisible()
+})

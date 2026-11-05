@@ -21,7 +21,8 @@ export class ApiError extends Error {
 }
 
 type TokenGetter = () => string | null
-type ExpiredHandler = (code: ApiErrorCode) => void
+/** recebe o token que falhou, para não derrubar uma sessão mais nova (ex.: login durante a validação) */
+type ExpiredHandler = (code: ApiErrorCode, failedToken: string) => void
 
 let getToken: TokenGetter = () => null
 let onAuthFailure: ExpiredHandler = () => {}
@@ -106,9 +107,9 @@ api.interceptors.response.use(
     } else {
       apiError = new ApiError('TRANSIENT', 'Falha de conexão. Verifique sua rede e tente novamente.', status)
     }
-    const sentToken = error.config?.headers?.Authorization
+    const sentToken = String(error.config?.headers?.Authorization ?? '').replace(/^Bearer /, '')
     if ((apiError.code === 'SESSION_EXPIRED' || apiError.code === 'UNAUTHORIZED') && sentToken) {
-      onAuthFailure(apiError.code)
+      onAuthFailure(apiError.code, sentToken)
     }
     throw apiError
   },
