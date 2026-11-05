@@ -39,7 +39,7 @@ export function WalletsBadge() {
 
 export function Footer() {
   return (
-    <footer className="container-k mt-20 pb-24 md:pb-6">
+    <footer className="container-k mt-20 pb-32 md:pb-6">
       <div className="bg-card">
         <div className="grid gap-8 p-6 md:grid-cols-2 md:p-8 lg:grid-cols-4">
           {FEATURES.map((f) => (

@@ -1,7 +1,7 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { SearchIcon, SlidersHorizontal, XIcon } from 'lucide-react'
+import { SearchIcon, XIcon } from 'lucide-react'
 import { nftListQuery } from '@/api/nfts'
 import { CATEGORIES, NETWORKS, SORTS, TABS } from '@/api/types'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -10,6 +10,7 @@ import { FilterPanel } from './FilterPanel'
 import { NftCard, NftCardSkeleton } from './NftCard'
 import { Pagination } from './Pagination'
 import { toListQuery, type CatalogSearch } from './search-schema'
+import { FilterIcon } from '@/components/figma-icons'
 
 interface Props {
   search: CatalogSearch
@@ -222,7 +223,7 @@ function MobileSearch({
     <div className="mb-5 flex gap-3 md:hidden">
       <form
         role="search"
-        className="flex h-11 flex-1 items-center gap-2 rounded-xl bg-card px-3"
+        className="flex h-11 flex-1 items-center gap-2 rounded-[10px] bg-card px-3"
         onSubmit={(e) => {
           e.preventDefault()
           onSubmit(text.trim() || undefined)
@@ -244,10 +245,10 @@ function MobileSearch({
       <button
         type="button"
         onClick={onOpenFilters}
-        className="grid size-11 place-items-center rounded-xl bg-primary text-primary-foreground"
+        className="grid size-11 place-items-center rounded-[14px] bg-[linear-gradient(137.05deg,_rgba(210,138,76,0.45)_-24.6%,_#D28A4C_100%)] text-primary-foreground"
         aria-label="Abrir filtros"
       >
-        <SlidersHorizontal className="size-5" aria-hidden />
+        <FilterIcon className="size-5" aria-hidden />
       </button>
     </div>
   )

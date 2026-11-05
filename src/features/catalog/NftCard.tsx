@@ -21,7 +21,7 @@ export function NftCard({ nft, priority = false, className }: { nft: NftSummary;
   const soldOut = nft.available === 0
   return (
     <article className={cn('group relative', className)}>
-      <div className="relative rounded-3xl bg-[#241612] p-2 md:rounded-none md:px-1 md:pt-6 md:pb-[26px]">
+      <div className="relative rounded-[20px] bg-[linear-gradient(143.28deg,_#241612_-12%,_#2F1D15_106.59%)] md:bg-[#241612] px-2 py-3 md:rounded-none md:px-1 md:pt-6 md:pb-[26px]">
         {nft.rarity === 'raro' && (
           <span className="absolute top-4 left-0 z-10 bg-primary px-3 py-0.5 text-xs font-semibold text-primary-foreground md:top-6">RARO</span>
         )}
@@ -36,7 +36,7 @@ export function NftCard({ nft, priority = false, className }: { nft: NftSummary;
           loading={priority ? 'eager' : 'lazy'}
           fetchPriority={priority ? 'high' : 'auto'}
           decoding="async"
-          className="aspect-square w-full rounded-2xl object-cover md:rounded-xl"
+          className="aspect-square w-full rounded-[16px] object-cover"
         />
         <FavoriteBadge nftId={nft.id} name={nft.name} />
         <HoverActions nft={nft} soldOut={soldOut} />

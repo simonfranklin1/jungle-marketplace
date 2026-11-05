@@ -41,13 +41,13 @@
 /* Kurio é um tema escuro único (Figma). */
 :root {
   color-scheme: dark;
-  --background: #130d0b;
+  --background: #140D0A;
   --foreground: #f4ece1;
-  --card: #211714;
+  --card: #241612;
   --card-foreground: #f4ece1;
   --popover: #211714;
   --popover-foreground: #f4ece1;
-  --primary: #d4884a;
+  --primary: #D28A4C;
   --primary-foreground: #1a0f0a;
   --secondary: #2c1f1a;
   --secondary-foreground: #f4ece1;

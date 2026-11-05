@@ -111,6 +111,12 @@ const TICK_MS = 30_000
 /** A cada 30s um NFT em destaque muda de preço ou de estoque (determinístico, em ciclo). */
 function startMarketTicker() {
   if (ticker) return
+  // testes E2E e regressão visual desligam o ticker para ter dados estáveis
+  try {
+    if (localStorage.getItem('kurio:ticker') === 'off') return
+  } catch {
+    /* ignore */
+  }
   ticker = setInterval(() => {
     if (connections.size === 0) return
     tick += 1

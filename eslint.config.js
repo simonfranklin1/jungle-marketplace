@@ -29,4 +29,10 @@ export default defineConfig([
     files: ['src/components/ui/**'],
     rules: { 'react-refresh/only-export-components': 'off' },
   },
+  {
+    // testes Playwright rodam em Node; o "use" das fixtures não é um hook do React
+    files: ['e2e/**', 'playwright.config.ts'],
+    languageOptions: { globals: globals.node },
+    rules: { 'react-hooks/rules-of-hooks': 'off' },
+  },
 ])

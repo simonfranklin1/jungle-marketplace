@@ -165,19 +165,21 @@ function Journal() {
  */
 function MobileHero() {
   return (
-    <section aria-label="Destaque Kurio" className="relative h-[190px] overflow-hidden rounded-[28px] bg-[#2a1a13]">
-      <div aria-hidden className="absolute inset-0" style={{ background: 'linear-gradient(104.74deg, rgba(210, 138, 76, 0.2) 1.08%, rgba(210, 138, 76, 0.1) 99.23%)' }} />
+    <section aria-label="Destaque Kurio" className="relative h-[190px] overflow-hidden rounded-[30px] bg-[#2a1a13]">
+      <div aria-hidden className="absolute inset-0" style={{
+        background: 'linear-gradient(104.74deg, rgba(210, 138, 76, 0.2) 1.08%, rgba(210, 138, 76, 0.1) 99.23%)'
+      }} />
       <div
         aria-hidden
-        className="absolute -top-24 left-[38%] size-[300px] rounded-full"
+        className="absolute -top-[31px] -left-[80px] size-[248px] rounded-full"
         style={{ background: 'linear-gradient(160.25deg, rgba(221, 154, 95, 0.43) 22.1%, rgba(210, 138, 76, 0.04) 87.42%)' }}
       />
       <div
         aria-hidden
-        className="absolute top-16 left-[24%] size-[190px] rounded-full"
-        style={{ background: 'linear-gradient(160.25deg, rgba(221, 154, 95, 0.43) 22.1%, rgba(210, 138, 76, 0.04) 87.42%)' }}
+        className="absolute -top-[10px] left-[73px] size-[248px] rounded-full"
+        style={{ background: 'linear-gradient(160.25deg, rgba(221, 154, 95, 0.37) 22.1%, rgba(210, 138, 76, 0) 87.42%)' }}
       />
-      <div className="relative z-10 flex h-full flex-col justify-center py-4 pr-[46%] pl-4">
+      <div className="relative z-10 flex h-full flex-col justify-center pt-[5.5px] pb-[28px] pr-[46%] pl-4">
         <p className="text-[11px]">Bem-vindo à Kurio</p>
         <h1 className="mt-1.5 text-[17px] leading-snug font-bold tracking-wide">
           SEJA DONO DA
@@ -192,22 +194,22 @@ function MobileHero() {
       <img
         src="/nfts/emerald.webp"
         alt="Arte em destaque: Emerald Ape #042"
-        width={128}
-        height={128}
+        width={138}
+        height={138}
         fetchPriority="high"
-        className="absolute top-3 right-3 z-10 size-[128px] rounded-2xl object-cover"
+        className="absolute top-3 right-3 z-10 size-[138px] rounded-2xl object-cover"
       />
       <img
         src="/nfts/sage-thumb.webp"
         alt=""
-        width={56}
-        height={56}
-        className="absolute top-[100px] right-[100px] z-20 size-14 rounded-xl border-2 border-[#2a1a13] object-cover"
+        width={58}
+        height={58}
+        className="absolute top-[100px] right-[84px] z-20 size-[58px] rounded-xl object-cover"
       />
-      <div className="absolute right-[18%] bottom-3 z-10 flex gap-1.5" aria-hidden>
-        <span className="size-1.5 rounded-full bg-primary" />
-        <span className="size-1.5 rounded-full bg-primary/70" />
-        <span className="size-1.5 rounded-full bg-primary/70" />
+      <div className="absolute right-[50%] bottom-3 z-10 flex gap-1.5" aria-hidden>
+        <span className="size-[7px] rounded-full bg-primary" />
+        <span className="size-[7px] rounded-full bg-primary/70" />
+        <span className="size-[7px] rounded-full bg-primary/70" />
       </div>
     </section>
   )

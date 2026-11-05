@@ -56,6 +56,8 @@ async function favoriteAfterLogin(id: string) {
   if (!uid) return
   try {
     const { data } = await api.put<string[]>(`/favorites/${id}`)
+    // o GET inicial dos favoritos (disparado no login) pode chegar depois e sobrescrever: cancela
+    await queryClient.cancelQueries({ queryKey: meKeys.favorites(uid) })
     queryClient.setQueryData(meKeys.favorites(uid), data)
     toast.success('Adicionado aos favoritos.')
   } catch {
