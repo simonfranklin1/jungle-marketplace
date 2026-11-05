@@ -4,11 +4,14 @@ import { toast } from 'sonner'
 import { isApiError } from '@/api/client'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { comingSoon } from '@/lib/coming-soon'
+import { FacebookColorIcon, GoogleIcon } from '@/components/brand-icons'
 import { cn } from '@/lib/utils'
 import { login, signup } from './auth-actions'
 import { authDialog, useAuthDialog, type AuthMode } from './session-store'
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const socialBtn =
+  'inline-flex h-10 items-center justify-center gap-3 rounded-sm border border-border text-sm text-muted-foreground hover:border-primary hover:text-foreground'
 
 export function AuthDialog() {
   const { open, mode, reason } = useAuthDialog()
@@ -30,11 +33,11 @@ export function AuthDialog() {
           <span className="relative bg-card px-3">Ou continue com</span>
         </div>
         <div className="grid gap-3">
-          <button type="button" onClick={() => comingSoon('Login com Google')} className="h-10 rounded-sm border border-border text-sm hover:border-primary">
-            Continuar com Google
+          <button type="button" onClick={() => comingSoon('Login com Google')} className={socialBtn}>
+            <GoogleIcon className="size-5 shrink-0" /> Continuar com Google
           </button>
-          <button type="button" onClick={() => comingSoon('Login com Facebook')} className="h-10 rounded-sm border border-border text-sm hover:border-primary">
-            Continuar com Facebook
+          <button type="button" onClick={() => comingSoon('Login com Facebook')} className={socialBtn}>
+            <FacebookColorIcon className="size-5 shrink-0" /> Continuar com Facebook
           </button>
         </div>
       </DialogContent>

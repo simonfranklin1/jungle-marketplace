@@ -1,12 +1,13 @@
 import { useId, useRef, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { AlertTriangleIcon, CheckCircle2Icon, Loader2Icon, PlugZapIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { ApiError, api, isApiError } from '@/api/client'
 import { meKeys } from '@/api/me'
 import { connectWallet, createOrder, type CreateOrderPayload } from '@/api/orders'
-import { NETWORKS, type Network, type Quote, type WalletType } from '@/api/types'
+import { NETWORKS, type Network, type Quote, type Wallet, type WalletType } from '@/api/types'
+import { walletsQuery } from '@/api/profile'
 import { WalletsBadge } from '@/components/layout/Footer'
 import { Field, inputCls } from '@/features/auth/AuthDialog'
 import { authDialog, useUser } from '@/features/auth/session-store'
@@ -20,7 +21,7 @@ type WalletState =
   | { status: 'idle' }
   | { status: 'connecting' }
   | { status: 'connected'; address: string; walletType: WalletType; network: Network }
-  | { status: 'rejected'; message: string }
+  | { status: 'rejected'; message: string; notRegistered?: boolean }
   | { status: 'disconnected'; message: string }
 
 type Phase = 'idle' | 'revalidating' | 'submitting' | 'retrying'
@@ -40,6 +41,15 @@ interface FormValues {
   email: string
   ensName: string
   note: string
+}
+
+function primaryOf(wallets: Wallet[]) {
+  return wallets.find((w) => w.kind === 'primary') ?? wallets[0]
+}
+
+function registeredLabel(wallets: Wallet[], type: WalletType) {
+  const w = wallets.find((x) => x.walletType === type)
+  return w ? `${w.nickname} · ${w.address.slice(0, 6)}…${w.address.slice(-4)}` : 'Não cadastrada no perfil'
 }
 
 function validate(v: FormValues, useOther: boolean, wallet: WalletState): Record<string, string> {
@@ -62,6 +72,7 @@ function validate(v: FormValues, useOther: boolean, wallet: WalletState): Record
 export function CheckoutPage() {
   const user = useUser()
   const cart = useCart()
+  const wallets = useQuery({ ...walletsQuery(user?.id ?? 'anon'), enabled: !!user })
 
   if (!user)
     return (
@@ -77,7 +88,7 @@ export function CheckoutPage() {
         </button>
       </div>
     )
-  if (cart.isLoading) return <div className="container-k pt-10"><div className="shimmer h-96 rounded-sm" aria-busy="true" aria-label="Carregando" /></div>
+  if (cart.isLoading || wallets.isPending) return <div className="container-k pt-10"><div className="shimmer h-96 rounded-sm" aria-busy="true" aria-label="Carregando" /></div>
   if (cart.items.length === 0)
     return (
       <div className="container-k py-20 text-center">
@@ -87,10 +98,10 @@ export function CheckoutPage() {
         </Link>
       </div>
     )
-  return <CheckoutForm key={user.id} />
+  return <CheckoutForm key={user.id} wallets={wallets.data ?? []} />
 }
 
-function CheckoutForm() {
+function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
   const user = useUser()!
   const cart = useCart()
   const qc = useQueryClient()
@@ -100,12 +111,12 @@ function CheckoutForm() {
   const [values, setValues] = useState<FormValues>({
     displayName: user.displayName,
     username: user.username,
-    network: 'ethereum',
-    profileName: user.displayName,
+    network: primaryOf(wallets)?.network ?? 'ethereum',
+    profileName: primaryOf(wallets)?.profileName ?? user.displayName,
     walletAddress: '',
     secondaryWallet: '',
-    walletType: '',
-    referralCode: '',
+    walletType: primaryOf(wallets)?.walletType ?? '',
+    referralCode: primaryOf(wallets)?.referralCode ?? '',
     email: user.email,
     ensName: user.ensName,
     note: '',
@@ -148,7 +159,8 @@ function CheckoutForm() {
       setErrors(({ walletAddress: _a, ...rest }) => rest)
       toast.success('Carteira conectada.')
     } catch (e) {
-      setWallet({ status: 'rejected', message: isApiError(e) ? e.message : 'Não foi possível conectar a carteira.' })
+      const notRegistered = isApiError(e) && (e.details as { reason?: string } | undefined)?.reason === 'WALLET_NOT_REGISTERED'
+      setWallet({ status: 'rejected', notRegistered, message: isApiError(e) ? e.message : 'Não foi possível conectar a carteira.' })
     }
   }
 
@@ -426,7 +438,10 @@ function CheckoutForm() {
                     onChange={() => chooseWallet(w.id)}
                     className="size-4 accent-[var(--primary)]"
                   />
-                  {w.label}
+                  <span className="flex flex-col">
+                    {w.label}
+                    <span className="text-xs text-muted-foreground">{registeredLabel(wallets, w.id)}</span>
+                  </span>
                   {wallet.status === 'connected' && wallet.walletType === w.id && (
                     <span className="ml-auto inline-flex items-center gap-1 text-xs text-primary">
                       <CheckCircle2Icon className="size-4" aria-hidden /> Conectada
@@ -497,7 +512,12 @@ function WalletStatus({ wallet, onConnect, canConnect }: { wallet: WalletState; 
         <>
           {(wallet.status === 'rejected' || wallet.status === 'disconnected') && (
             <p role="alert" className="mb-2 text-destructive">
-              {wallet.message}
+              {wallet.message}{' '}
+              {wallet.status === 'rejected' && wallet.notRegistered && (
+                <Link to="/perfil/carteiras" className="underline">
+                  Cadastrar carteira
+                </Link>
+              )}
             </p>
           )}
           <button

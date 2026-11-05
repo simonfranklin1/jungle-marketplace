@@ -158,7 +158,7 @@ function Receipt({ order }: { order: Order }) {
             {order.status === 'confirmed' &&
               `Transação confirmada na ${networkLabel}. A propriedade foi transferida para sua carteira conectada e registrada na rede.`}
             {order.status === 'pending' && `Rede: ${networkLabel}. Nenhuma confirmação é exibida antes da resposta da rede.`}
-            {order.status === 'rejected' && 'Os itens voltaram para o seu carrinho para você tentar novamente.'}
+            {order.status === 'rejected' && 'Seus itens continuam no carrinho para você tentar novamente.'}
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             {order.status === 'confirmed' && (

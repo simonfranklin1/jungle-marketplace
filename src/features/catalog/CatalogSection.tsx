@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { SearchIcon, SlidersHorizontal, XIcon } from 'lucide-react'
@@ -16,9 +16,11 @@ interface Props {
   /** patch de filtros; qualquer mudança que não seja de página volta para a página 1 */
   onChange: (patch: Partial<CatalogSearch>, opts?: { keepPage?: boolean }) => void
   showFeatured?: boolean
+  /** conteúdo mobile entre a busca e as abas (hero do frame mobile) */
+  mobileHero?: ReactNode
 }
 
-export function CatalogSection({ search, onChange, showFeatured = true }: Props) {
+export function CatalogSection({ search, onChange, showFeatured = true, mobileHero }: Props) {
   const { data, isPending, isError, error, refetch, isFetching, isPlaceholderData } = useQuery({ ...nftListQuery(toListQuery(search)), placeholderData: keepPreviousData })
   const [filtersOpen, setFiltersOpen] = useState(false)
   const topRef = useRef<HTMLDivElement>(null)
@@ -49,6 +51,7 @@ export function CatalogSection({ search, onChange, showFeatured = true }: Props)
       </h2>
 
       <MobileSearch value={search.q} onSubmit={(q) => onChange({ q })} onOpenFilters={() => setFiltersOpen(true)} />
+      {mobileHero && <div className="mb-6 md:hidden">{mobileHero}</div>}
 
       <div className="grid gap-6 md:grid-cols-[220px_1fr] lg:grid-cols-[240px_1fr] lg:gap-8">
         <aside className="hidden md:block" aria-label="Filtros">
@@ -73,7 +76,7 @@ export function CatalogSection({ search, onChange, showFeatured = true }: Props)
                 </button>
               ))}
             </div>
-            <label className="flex items-center gap-2 text-sm">
+            <label className="hidden items-center gap-2 text-sm md:flex">
               <span>Ordenar por:</span>
               <select
                 value={search.sort ?? 'recent'}
@@ -153,13 +156,14 @@ export function CatalogSection({ search, onChange, showFeatured = true }: Props)
               )}
               <ul
                 className={cn(
-                  'grid grid-cols-2 gap-x-4 gap-y-8 transition-opacity lg:grid-cols-3 lg:gap-x-6',
+                  'grid grid-cols-2 gap-x-4 gap-y-8 transition-opacity max-md:pb-8 lg:grid-cols-3 lg:gap-x-6',
                   isFetching && isPlaceholderData && 'opacity-60',
                 )}
                 aria-busy={isFetching}
               >
                 {data.items.map((nft, i) => (
-                  <li key={nft.id}>
+                  // mobile: coluna da direita desce 32px (grade escalonada do frame mobile)
+                  <li key={nft.id} className="max-md:even:translate-y-8">
                     <NftCard nft={nft} priority={i < 3} />
                   </li>
                 ))}
@@ -178,6 +182,20 @@ export function CatalogSection({ search, onChange, showFeatured = true }: Props)
             <SheetTitle>Filtros</SheetTitle>
             <SheetDescription>Os filtros são aplicados imediatamente.</SheetDescription>
           </SheetHeader>
+          <label className="grid gap-1.5 text-sm">
+            <span className="font-semibold">Ordenar por</span>
+            <select
+              value={search.sort ?? 'recent'}
+              onChange={(e) => onChange({ sort: e.target.value === 'recent' ? undefined : (e.target.value as CatalogSearch['sort']) })}
+              className="rounded-sm border border-input bg-background px-2 py-2 text-sm"
+            >
+              {SORTS.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
+          </label>
           <FilterPanel search={search} facets={data?.facets} onChange={onChange} />
         </SheetContent>
       </Sheet>

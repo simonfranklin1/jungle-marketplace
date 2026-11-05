@@ -83,7 +83,7 @@ export const catalogHandlers = [
         : tab === 'trending'
           ? n.trendingScore >= 60
           : true
-    const base = db.nfts.filter((n) => matchQ(n) && matchPrice(n) && matchTab(n))
+    const base = is('empty-catalog') ? [] : db.nfts.filter((n) => matchQ(n) && matchPrice(n) && matchTab(n))
 
     const categories = Object.fromEntries(CATEGORIES.map((c) => [c.id, 0])) as Record<Category, number>
     base.filter((n) => !network || n.network === network).forEach((n) => (categories[n.category] += 1))

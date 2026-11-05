@@ -18,7 +18,7 @@ export function Header() {
   const count = useCartCount()
 
   return (
-    <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
+    <header className="sticky top-0 z-40 hidden bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80 md:block">
       <div className="container-k">
         <div className="flex h-16 items-center justify-between gap-4 border-b border-border">
           <Link to="/" className="text-sm font-bold tracking-[0.2em]" aria-label="Kurio, página inicial">
@@ -86,9 +86,13 @@ function AccountButton() {
         className="flex items-center gap-2 rounded-sm px-1 text-sm hover:text-primary"
         aria-label={`Meu perfil (${user.displayName})`}
       >
-        <span className="grid size-8 place-items-center rounded-full bg-primary font-bold text-primary-foreground" aria-hidden>
-          {user.displayName.charAt(0).toUpperCase()}
-        </span>
+        {user.avatarUrl ? (
+          <img src={user.avatarUrl} alt="" width={32} height={32} className="size-8 rounded-full object-cover" />
+        ) : (
+          <span className="grid size-8 place-items-center rounded-full bg-primary font-bold text-primary-foreground" aria-hidden>
+            {user.displayName.charAt(0).toUpperCase()}
+          </span>
+        )}
         <span className="hidden max-w-28 truncate lg:inline">{user.displayName.split(' ')[0]}</span>
       </Link>
       <button

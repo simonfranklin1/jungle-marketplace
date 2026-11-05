@@ -5,7 +5,8 @@ import { HeartIcon, MailIcon, MinusIcon, PlusIcon, SearchIcon, StarIcon } from '
 import { toast } from 'sonner'
 import { nftDetailQuery } from '@/api/nfts'
 import { isApiError } from '@/api/client'
-import type { Edition, Nft } from '@/api/types'
+import type { Nft } from '@/api/types'
+import { pickDefaultEdition } from '@/features/catalog/editions'
 import { NETWORKS } from '@/api/types'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { LinkedinIcon, TwitterIcon } from '@/components/brand-icons'
@@ -60,14 +61,8 @@ function Breadcrumb({ name }: { name?: string }) {
   )
 }
 
-const EDITION_PREFERENCE = ['1-50', '1-10', 'open', '1-1']
-function firstAvailable(editions: Edition[]) {
-  const byPref = [...editions].sort((a, b) => EDITION_PREFERENCE.indexOf(a.id) - EDITION_PREFERENCE.indexOf(b.id))
-  return byPref.find((e) => e.available > 0) ?? editions[0]
-}
-
 function NftDetail({ nft }: { nft: Nft }) {
-  const [editionId, setEditionId] = useState(() => firstAvailable(nft.editions).id)
+  const [editionId, setEditionId] = useState(() => pickDefaultEdition(nft.editions).id)
   const [qty, setQty] = useState(1)
   const [zoom, setZoom] = useState(false)
   const [tab, setTab] = useState<'details' | 'reviews'>('details')

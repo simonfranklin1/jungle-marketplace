@@ -3,6 +3,7 @@ import { NETWORKS, type Cart, type CartItem, type Network } from '@/api/types'
 import { db, findNft, persist } from '../db'
 import { API, apiError, authenticate, latency } from '../http-utils'
 import { checkCoupon, computeQuote, normalizeItems } from '../quote'
+import { is } from '../scenario'
 
 function emptyCart(): Cart {
   return { items: [], coupon: null, updatedAt: new Date().toISOString() }
@@ -88,6 +89,7 @@ export const cartHandlers = [
 
   http.put(`${API}/favorites/:nftId`, async ({ request, params }) => {
     await latency(150)
+    if (is('favorites-error')) return apiError('TRANSIENT', 'Não foi possível salvar o favorito agora.')
     const auth = authenticate(request)
     if (!auth.ok) return auth.response
     const id = String(params.nftId)
@@ -101,6 +103,7 @@ export const cartHandlers = [
 
   http.delete(`${API}/favorites/:nftId`, async ({ request, params }) => {
     await latency(150)
+    if (is('favorites-error')) return apiError('TRANSIENT', 'Não foi possível salvar o favorito agora.')
     const auth = authenticate(request)
     if (!auth.ok) return auth.response
     db.favorites[auth.userId] = (db.favorites[auth.userId] ?? []).filter((x) => x !== String(params.nftId))

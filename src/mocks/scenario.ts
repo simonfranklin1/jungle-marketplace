@@ -5,6 +5,10 @@
 export const SCENARIOS = {
   default: 'Padrão (latência curta, tudo funciona)',
   slow: 'Latência alta (2.5s) em todas as requisições',
+  'variable-latency': 'Latência variável determinística (respostas podem chegar fora de ordem)',
+  offline: 'Sem conexão: toda requisição falha com erro de rede',
+  'empty-catalog': 'Catálogo sem resultados',
+  'favorites-error': 'Falha ao salvar favoritos (testa rollback otimista)',
   'catalog-error': 'Falha transitória (503) na listagem de NFTs',
   'flaky': 'Primeira tentativa de cada GET falha com 503',
   timeout: 'Requisições de catálogo excedem o timeout',

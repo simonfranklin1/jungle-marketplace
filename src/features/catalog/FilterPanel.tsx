@@ -68,7 +68,7 @@ export function FilterPanel({ search, facets, onChange }: Props) {
           value={range}
           onValueChange={(v) => setRange(v as [number, number])}
           aria-label="Faixa de preço em ETH"
-          className="px-1 [&_[data-slot=slider-range]]:bg-primary [&_[data-slot=slider-thumb]]:size-3.5 [&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-thumb]]:bg-primary [&_[data-slot=slider-track]]:bg-primary/30"
+          className="px-1 [&_[data-slot=slider-range]]:bg-primary [&_[data-slot=slider-thumb]]:size-5 [&_[data-slot=slider-thumb]]:border-[3px] [&_[data-slot=slider-thumb]]:border-card [&_[data-slot=slider-thumb]]:bg-primary [&_[data-slot=slider-thumb]]:shadow-[0_0_0_1px_var(--card)] [&_[data-slot=slider-track]]:h-1 [&_[data-slot=slider-track]]:bg-primary"
         />
         <p className="mt-3 text-sm" aria-live="polite">
           Preço: {fmt(range[0])} – {fmt(range[1])} ETH

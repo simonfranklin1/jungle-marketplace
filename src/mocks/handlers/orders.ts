@@ -32,14 +32,9 @@ export function settleOrder(order: Order) {
   const rejected = order.failureReason === '__reject__'
   const now = new Date().toISOString()
   if (rejected) {
+    // falha: o carrinho fica intacto (os itens nunca saíram dele)
     order.status = 'rejected'
     order.failureReason = 'O pagamento foi recusado pela carteira. Nenhum valor foi cobrado.'
-    const cart = db.carts[order.userId] ?? { items: [], coupon: null, updatedAt: now }
-    const items = normalizeItems([
-      ...cart.items,
-      ...order.receipt.lines.map((l) => ({ nftId: l.nftId, editionId: l.editionId, quantity: l.quantity })),
-    ])!
-    db.carts[order.userId] = { items, coupon: order.receipt.coupon, updatedAt: now }
   } else {
     order.status = 'confirmed'
     order.failureReason = null
@@ -52,6 +47,17 @@ export function settleOrder(order: Order) {
       nft.available = nft.editions.reduce((a, e) => a + e.available, 0)
       nft.version += 1
       emitNftUpdated(nft)
+    }
+    // confirmação: remove do carrinho só o que foi comprado (itens adicionados depois ficam)
+    const cart = db.carts[order.userId]
+    if (cart) {
+      const items = cart.items
+        .map((i) => {
+          const bought = order.receipt.lines.find((l) => l.nftId === i.nftId && l.editionId === i.editionId)
+          return bought ? { ...i, quantity: i.quantity - bought.quantity } : i
+        })
+        .filter((i) => i.quantity > 0)
+      db.carts[order.userId] = { items, coupon: items.length ? cart.coupon : null, updatedAt: now }
     }
   }
   order.updatedAt = now
@@ -77,7 +83,13 @@ export const orderHandlers = [
     if (!WALLET_TYPES.includes(body?.walletType as WalletType))
       return apiError('VALIDATION', 'Selecione uma carteira compatível.')
     if (is('wallet-rejected')) return apiError('FORBIDDEN', 'Você recusou a conexão na carteira.', { details: { reason: 'WALLET_REJECTED' } })
-    return HttpResponse.json({ walletType: body!.walletType, address: `0x${randomHex(40)}`, network: body!.network ?? 'ethereum' })
+    // conecta apenas carteiras cadastradas no perfil (o endereço vem do cadastro)
+    const registered = (db.wallets[auth.userId] ?? []).find((w) => w.walletType === body!.walletType)
+    if (!registered)
+      return apiError('NOT_FOUND', 'Nenhuma carteira deste tipo está cadastrada no seu perfil.', {
+        details: { reason: 'WALLET_NOT_REGISTERED' },
+      })
+    return HttpResponse.json({ walletType: registered.walletType, address: registered.address, network: body!.network ?? registered.network, walletId: registered.id })
   }),
 
   http.post(`${API}/orders`, async ({ request }) => {
@@ -171,7 +183,6 @@ export const orderHandlers = [
     }
     db.orders.push(order)
     db.idempotency[key] = { userId: auth.userId, fingerprint: fp, orderId: order.id }
-    db.carts[auth.userId] = { items: [], coupon: null, updatedAt: now }
     persist()
     scheduleSettle(order.id)
 

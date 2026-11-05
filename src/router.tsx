@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components -- arquivo de definição de rotas */
 import {
   createRootRouteWithContext,
+  redirect,
   createRoute,
   createRouter,
   Link,
@@ -11,8 +12,10 @@ import type { QueryClient } from '@tanstack/react-query'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { MobileNav } from '@/components/layout/MobileNav'
+import { MobileTopBar } from '@/components/layout/MobileTopBar'
 import { Toaster } from '@/components/ui/sonner'
 import { AuthDialog } from '@/features/auth/AuthDialog'
+import { authDialog, sessionStore } from '@/features/auth/session-store'
 import { LiveAnnouncer } from '@/features/realtime/LiveAnnouncer'
 import { QaPanel } from '@/features/realtime/QaPanel'
 import { catalogSearchSchema, type CatalogSearch } from '@/features/catalog/search-schema'
@@ -24,6 +27,10 @@ import { NftDetailPage } from '@/pages/NftDetailPage'
 import { CartPage } from '@/pages/CartPage'
 import { CheckoutPage } from '@/pages/CheckoutPage'
 import { OrderPage } from '@/pages/OrderPage'
+import { ProfileLayout } from '@/pages/profile/ProfileLayout'
+import { ProfilePage } from '@/pages/profile/ProfilePage'
+import { WalletsPage } from '@/pages/profile/WalletsPage'
+import { FavoritesPage } from '@/pages/profile/FavoritesPage'
 
 interface RouterContext {
   queryClient: QueryClient
@@ -39,6 +46,7 @@ function RootLayout() {
         Pular para o conteúdo
       </a>
       <Header />
+      <MobileTopBar />
       <main id="conteudo" tabIndex={-1} className="min-h-[60vh] outline-none">
         <Outlet />
       </main>
@@ -50,6 +58,20 @@ function RootLayout() {
       <Toaster position="top-center" richColors closeButton expand visibleToasts={4} />
     </>
   )
+}
+
+/**
+ * Proteção de fluxos privados no Router: sem sessão, volta para uma rota pública, abre o
+ * login e, após autenticar, retorna exatamente para onde o usuário queria ir.
+ */
+let appRouter: ReturnType<typeof createAppRouter> | null = null
+function requireAuth(fallback: '/' | '/carrinho', reason: string) {
+  return ({ location }: { location: { href: string } }) => {
+    if (sessionStore.get()) return
+    const target = location.href
+    authDialog.open('login', reason, () => void appRouter?.history.push(target))
+    throw redirect({ to: fallback })
+  }
 }
 
 const rootRoute = createRootRouteWithContext<RouterContext>()({
@@ -127,15 +149,6 @@ const nftRoute = createRoute({
   },
 })
 
-function Placeholder({ title }: { title: string }) {
-  return (
-    <div className="container-k py-20 text-center">
-      <h1 className="text-xl font-bold">{title}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Em construção — chega nas próximas fases.</p>
-    </div>
-  )
-}
-
 const cartRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/carrinho',
@@ -145,12 +158,14 @@ const cartRoute = createRoute({
 const checkoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/checkout',
+  beforeLoad: requireAuth('/carrinho', 'Entre para conectar sua carteira e finalizar a compra.'),
   component: CheckoutPage,
 })
 
 const orderRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/pedido/$orderId',
+  beforeLoad: requireAuth('/', 'Entre para ver seu pedido.'),
   component: function OrderRoute() {
     const { orderId } = orderRoute.useParams()
     return <OrderPage orderId={orderId} />
@@ -160,7 +175,26 @@ const orderRoute = createRoute({
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/perfil',
-  component: () => <Placeholder title="Perfil" />,
+  beforeLoad: requireAuth('/', 'Entre para acessar seu perfil.'),
+  component: ProfileLayout,
+})
+
+const profileIndexRoute = createRoute({
+  getParentRoute: () => profileRoute,
+  path: '/',
+  component: ProfilePage,
+})
+
+const walletsRoute = createRoute({
+  getParentRoute: () => profileRoute,
+  path: '/carteiras',
+  component: WalletsPage,
+})
+
+const favoritesRoute = createRoute({
+  getParentRoute: () => profileRoute,
+  path: '/favoritos',
+  component: FavoritesPage,
 })
 
 function NotFound() {
@@ -175,16 +209,18 @@ function NotFound() {
   )
 }
 
-const routeTree = rootRoute.addChildren([indexRoute, marketRoute, nftRoute, cartRoute, checkoutRoute, orderRoute, profileRoute])
+const routeTree = rootRoute.addChildren([indexRoute, marketRoute, nftRoute, cartRoute, checkoutRoute, orderRoute, profileRoute.addChildren([profileIndexRoute, walletsRoute, favoritesRoute])])
 
 export function createAppRouter(queryClient: QueryClient) {
-  return createRouter({
+  const router = createRouter({
     routeTree,
     context: { queryClient },
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,
     scrollRestoration: true,
   })
+  appRouter = router
+  return router
 }
 
 declare module '@tanstack/react-router' {

@@ -7,6 +7,8 @@ import { createAppRouter } from '@/router'
 import { bootstrapAuth } from '@/features/auth/auth-actions'
 import { configureMockRecovery } from '@/api/client'
 import { startRealtime } from '@/features/realtime/realtime-client'
+import { sessionStore } from '@/features/auth/session-store'
+import { guestCart } from '@/features/cart/guest-cart'
 import './index.css'
 
 /**
@@ -21,7 +23,12 @@ async function enableMocking() {
     import('./mocks/db'),
   ])
   const { reset } = scenario.applyScenarioFromUrl()
-  if (reset) dbModule.resetDb()
+  if (reset) {
+    // reset completo: backend simulado + sessão + carrinho de visitante
+    dbModule.resetDb()
+    sessionStore.set(null)
+    guestCart.clear()
+  }
   const options = {
     onUnhandledRequest: 'bypass',
     quiet: import.meta.env.PROD,

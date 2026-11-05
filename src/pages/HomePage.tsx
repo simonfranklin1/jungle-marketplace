@@ -19,9 +19,11 @@ const SLIDES = [
 export function HomePage({ search, onChange }: Props) {
   return (
     <>
-      <Hero />
-      <div className="mt-12 md:mt-16">
-        <CatalogSection search={search} onChange={onChange} />
+      <div className="hidden md:block">
+        <Hero />
+      </div>
+      <div className="pt-5 md:mt-16 md:pt-0">
+        <CatalogSection search={search} onChange={onChange} mobileHero={<MobileHero />} />
       </div>
       <PromoCards onExplore={() => onChange({ tab: 'new' })} onExploreAll={() => onChange({ tab: undefined })} />
       <Journal />
@@ -153,6 +155,60 @@ function Journal() {
           </li>
         ))}
       </ul>
+    </section>
+  )
+}
+
+/**
+ * Hero do frame mobile (366x190): retângulo com gradiente e duas elipses ao fundo,
+ * texto à esquerda e duas artes sobrepostas à direita.
+ */
+function MobileHero() {
+  return (
+    <section aria-label="Destaque Kurio" className="relative h-[190px] overflow-hidden rounded-[28px] bg-[#2a1a13]">
+      <div aria-hidden className="absolute inset-0" style={{ background: 'linear-gradient(104.74deg, rgba(210, 138, 76, 0.2) 1.08%, rgba(210, 138, 76, 0.1) 99.23%)' }} />
+      <div
+        aria-hidden
+        className="absolute -top-24 left-[38%] size-[300px] rounded-full"
+        style={{ background: 'linear-gradient(160.25deg, rgba(221, 154, 95, 0.43) 22.1%, rgba(210, 138, 76, 0.04) 87.42%)' }}
+      />
+      <div
+        aria-hidden
+        className="absolute top-16 left-[24%] size-[190px] rounded-full"
+        style={{ background: 'linear-gradient(160.25deg, rgba(221, 154, 95, 0.43) 22.1%, rgba(210, 138, 76, 0.04) 87.42%)' }}
+      />
+      <div className="relative z-10 flex h-full flex-col justify-center py-4 pr-[46%] pl-4">
+        <p className="text-[11px]">Bem-vindo à Kurio</p>
+        <h1 className="mt-1.5 text-[17px] leading-snug font-bold tracking-wide">
+          SEJA DONO DA
+          <br />
+          CULTURA DIGITAL
+        </h1>
+        <p className="mt-1.5 text-[11px] leading-4 text-muted-foreground">Descubra NFTs selecionados de criadores do mundo todo.</p>
+        <a href="#catalogo" className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-primary">
+          EXPLORAR <ArrowRight className="size-3.5" aria-hidden />
+        </a>
+      </div>
+      <img
+        src="/nfts/emerald.webp"
+        alt="Arte em destaque: Emerald Ape #042"
+        width={128}
+        height={128}
+        fetchPriority="high"
+        className="absolute top-3 right-3 z-10 size-[128px] rounded-2xl object-cover"
+      />
+      <img
+        src="/nfts/sage-thumb.webp"
+        alt=""
+        width={56}
+        height={56}
+        className="absolute top-[100px] right-[100px] z-20 size-14 rounded-xl border-2 border-[#2a1a13] object-cover"
+      />
+      <div className="absolute right-[18%] bottom-3 z-10 flex gap-1.5" aria-hidden>
+        <span className="size-1.5 rounded-full bg-primary" />
+        <span className="size-1.5 rounded-full bg-primary/70" />
+        <span className="size-1.5 rounded-full bg-primary/70" />
+      </div>
     </section>
   )
 }

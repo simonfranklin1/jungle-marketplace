@@ -116,7 +116,7 @@ export function handleOrderUpdated(qc: QueryClient, evt: OrderUpdatedEvent) {
   void qc.invalidateQueries({ queryKey: meKeys.cart(uid) })
   if (cached?.status === 'pending' || !cached) {
     if (evt.data.status === 'confirmed') toast.success('Pedido confirmado na rede! Seus NFTs estão na carteira.')
-    if (evt.data.status === 'rejected') toast.error('Pagamento recusado. Os itens voltaram ao carrinho.')
+    if (evt.data.status === 'rejected') toast.error('Pagamento recusado. Seus itens continuam no carrinho.')
   }
   announce(`Pedido ${evt.data.status === 'confirmed' ? 'confirmado' : evt.data.status === 'rejected' ? 'recusado' : 'atualizado'}.`)
   return 'applied'

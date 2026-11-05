@@ -11,6 +11,10 @@ import { useRealtimeStatus } from './realtime-client'
 const SCENARIOS = [
   'default',
   'slow',
+  'variable-latency',
+  'offline',
+  'empty-catalog',
+  'favorites-error',
   'catalog-error',
   'flaky',
   'timeout',
