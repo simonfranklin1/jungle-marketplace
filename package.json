@@ -12,7 +12,9 @@
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
     "test:e2e:report": "playwright show-report",
-    "lighthouse": "lhci autorun"
+    "lighthouse": "npm run build && npm run lighthouse:mobile && npm run lighthouse:desktop && node lighthouse/summarize.mjs",
+    "lighthouse:mobile": "lhci collect --config=lighthouse/lighthouserc.mobile.cjs && lhci upload --config=lighthouse/lighthouserc.mobile.cjs && lhci assert --config=lighthouse/lighthouserc.mobile.cjs",
+    "lighthouse:desktop": "lhci collect --config=lighthouse/lighthouserc.desktop.cjs && lhci upload --config=lighthouse/lighthouserc.desktop.cjs && lhci assert --config=lighthouse/lighthouserc.desktop.cjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

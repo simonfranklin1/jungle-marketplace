@@ -54,16 +54,19 @@ function Hero() {
           >
             EXPLORAR <ArrowRight className="size-4 md:hidden" aria-hidden />
           </a>
-          <div className="mt-4 flex gap-2 md:mt-8 md:justify-center" role="group" aria-label="Escolher destaque">
+          <div className="mt-4 -ml-[7px] flex md:mt-8 md:ml-0 md:justify-center" role="group" aria-label="Escolher destaque">
             {SLIDES.map((s, idx) => (
+              // área de toque de 24px (WCAG 2.5.8); o ponto visível continua com 10px
               <button
                 key={s.img}
                 type="button"
                 onClick={() => setI(idx)}
                 aria-label={`Destaque ${idx + 1} de ${SLIDES.length}`}
                 aria-current={idx === i}
-                className={cn('size-2.5 rounded-full bg-primary/50', idx === i && 'bg-primary')}
-              />
+                className="grid size-6 place-items-center rounded-full"
+              >
+                <span aria-hidden className={cn('size-2.5 rounded-full bg-primary/50', idx === i && 'bg-primary')} />
+              </button>
             ))}
           </div>
         </div>

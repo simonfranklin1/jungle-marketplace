@@ -1,0 +1,74 @@
+[
+  {
+    "url": "http://localhost:4180/",
+    "isRepresentativeRun": false,
+    "htmlPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost--2026_11_05_11_15_31.report.html",
+    "jsonPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost--2026_11_05_11_15_31.report.json",
+    "summary": {
+      "performance": 0.77,
+      "accessibility": 1,
+      "best-practices": 1,
+      "seo": 0.92
+    }
+  },
+  {
+    "url": "http://localhost:4180/",
+    "isRepresentativeRun": false,
+    "htmlPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost--2026_11_05_11_16_54.report.html",
+    "jsonPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost--2026_11_05_11_16_54.report.json",
+    "summary": {
+      "performance": 0.95,
+      "accessibility": 1,
+      "best-practices": 1,
+      "seo": 0.92
+    }
+  },
+  {
+    "url": "http://localhost:4180/nft/emerald-ape-042",
+    "isRepresentativeRun": false,
+    "htmlPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost-nft_emerald_ape_042-2026_11_05_11_17_24.report.html",
+    "jsonPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost-nft_emerald_ape_042-2026_11_05_11_17_24.report.json",
+    "summary": {
+      "performance": 0.97,
+      "accessibility": 1,
+      "best-practices": 1,
+      "seo": 0.92
+    }
+  },
+  {
+    "url": "http://localhost:4180/nft/emerald-ape-042",
+    "isRepresentativeRun": false,
+    "htmlPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost-nft_emerald_ape_042-2026_11_05_11_17_45.report.html",
+    "jsonPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost-nft_emerald_ape_042-2026_11_05_11_17_45.report.json",
+    "summary": {
+      "performance": 0.95,
+      "accessibility": 1,
+      "best-practices": 1,
+      "seo": 0.92
+    }
+  },
+  {
+    "url": "http://localhost:4180/",
+    "isRepresentativeRun": true,
+    "htmlPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost--2026_11_05_11_16_18.report.html",
+    "jsonPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost--2026_11_05_11_16_18.report.json",
+    "summary": {
+      "performance": 0.86,
+      "accessibility": 1,
+      "best-practices": 1,
+      "seo": 0.92
+    }
+  },
+  {
+    "url": "http://localhost:4180/nft/emerald-ape-042",
+    "isRepresentativeRun": true,
+    "htmlPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost-nft_emerald_ape_042-2026_11_05_11_18_15.report.html",
+    "jsonPath": "C:\\Users\\frank\\Downloads\\jungle-gaming\\jungle-marketplace\\lighthouse\\reports\\desktop\\localhost-nft_emerald_ape_042-2026_11_05_11_18_15.report.json",
+    "summary": {
+      "performance": 0.97,
+      "accessibility": 1,
+      "best-practices": 1,
+      "seo": 0.92
+    }
+  }
+]

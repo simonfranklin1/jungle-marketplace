@@ -65,7 +65,17 @@ export const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-api.interceptors.request.use((config) => {
+/**
+ * O app renderiza sem esperar o MSW (melhor LCP); as requisições é que aguardam o backend
+ * simulado ficar pronto antes de sair.
+ */
+let apiReady: Promise<unknown> = Promise.resolve()
+export function setApiReady(p: Promise<unknown>) {
+  apiReady = p
+}
+
+api.interceptors.request.use(async (config) => {
+  await apiReady
   const token = getToken()
   if (token) config.headers.set('Authorization', `Bearer ${token}`)
   return config

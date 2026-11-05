@@ -5,7 +5,7 @@ import { RouterProvider } from '@tanstack/react-router'
 import { queryClient } from '@/api/query-client'
 import { createAppRouter } from '@/router'
 import { bootstrapAuth } from '@/features/auth/auth-actions'
-import { configureMockRecovery } from '@/api/client'
+import { configureMockRecovery, setApiReady } from '@/api/client'
 import { startRealtime } from '@/features/realtime/realtime-client'
 import { sessionStore } from '@/features/auth/session-store'
 import { guestCart } from '@/features/cart/guest-cart'
@@ -45,9 +45,13 @@ async function enableMocking() {
 
 const router = createAppRouter(queryClient)
 
-enableMocking().then(() => {
+// O LCP é a imagem do 1º card, que depende dos dados (MSW). Renderizar antes do MSW só faz
+// os dois disputarem a CPU (pior TBT), então o app espera o backend simulado ficar pronto.
+// setApiReady continua garantindo que nenhuma requisição saia antes disso.
+const mocks = enableMocking()
+setApiReady(mocks)
+void mocks.then(() => {
   bootstrapAuth()
-  void startRealtime(queryClient)
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
@@ -55,4 +59,6 @@ enableMocking().then(() => {
       </QueryClientProvider>
     </StrictMode>,
   )
+  // o socket.io-client só é carregado depois que o MSW passou a interceptar o WebSocket
+  void startRealtime(queryClient)
 })

@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { meKeys } from '@/api/me'
@@ -10,6 +10,12 @@ import { authDialog, useUser } from '@/features/auth/session-store'
 import { comingSoon } from '@/lib/coming-soon'
 import { formatEth } from '@/lib/eth'
 import { WALLETS } from '@/features/checkout/wallets'
+
+/** Componente da rota /pedido/$orderId (carregado sob demanda). */
+export function OrderRoutePage() {
+  const { orderId } = useParams({ strict: false }) as { orderId: string }
+  return <OrderPage orderId={orderId} />
+}
 
 export function OrderPage({ orderId }: { orderId: string }) {
   const user = useUser()

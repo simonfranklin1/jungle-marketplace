@@ -4,6 +4,7 @@ import {
   redirect,
   createRoute,
   createRouter,
+  lazyRouteComponent,
   Link,
   Outlet,
   useNavigate,
@@ -14,23 +15,16 @@ import { Footer } from '@/components/layout/Footer'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { MobileTopBar } from '@/components/layout/MobileTopBar'
 import { Toaster } from '@/components/ui/sonner'
-import { AuthDialog } from '@/features/auth/AuthDialog'
+import { LazyAuthDialog } from '@/features/auth/LazyAuthDialog'
 import { authDialog, sessionStore } from '@/features/auth/session-store'
 import { LiveAnnouncer } from '@/features/realtime/LiveAnnouncer'
 import { QaPanel } from '@/features/realtime/QaPanel'
-import { catalogSearchSchema, type CatalogSearch } from '@/features/catalog/search-schema'
+import { validateCatalogSearch, type CatalogSearch } from '@/features/catalog/search-schema'
 import { CatalogSection } from '@/features/catalog/CatalogSection'
 import { nftDetailQuery, nftListQuery, nftRelatedQuery } from '@/api/nfts'
 import { toListQuery } from '@/features/catalog/search-schema'
 import { HomePage } from '@/pages/HomePage'
 import { NftDetailPage } from '@/pages/NftDetailPage'
-import { CartPage } from '@/pages/CartPage'
-import { CheckoutPage } from '@/pages/CheckoutPage'
-import { OrderPage } from '@/pages/OrderPage'
-import { ProfileLayout } from '@/pages/profile/ProfileLayout'
-import { ProfilePage } from '@/pages/profile/ProfilePage'
-import { WalletsPage } from '@/pages/profile/WalletsPage'
-import { FavoritesPage } from '@/pages/profile/FavoritesPage'
 
 interface RouterContext {
   queryClient: QueryClient
@@ -47,12 +41,12 @@ function RootLayout() {
       </a>
       <Header />
       <MobileTopBar />
-      <main id="conteudo" tabIndex={-1} className="min-h-[60vh] outline-none">
+      <main id="conteudo" tabIndex={-1} className="min-h-screen outline-none">
         <Outlet />
       </main>
       <Footer />
       <MobileNav />
-      <AuthDialog />
+      <LazyAuthDialog />
       <LiveAnnouncer />
       <QaPanel />
       <Toaster position="top-center" richColors closeButton expand visibleToasts={4} />
@@ -96,7 +90,7 @@ function useCatalogNavigate(from: '/' | '/mercado') {
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  validateSearch: catalogSearchSchema,
+  validateSearch: validateCatalogSearch,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) => {
     void context.queryClient.prefetchQuery(nftListQuery(toListQuery(deps)))
@@ -111,7 +105,7 @@ const indexRoute = createRoute({
 const marketRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/mercado',
-  validateSearch: catalogSearchSchema,
+  validateSearch: validateCatalogSearch,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) => {
     void context.queryClient.prefetchQuery(nftListQuery(toListQuery(deps)))
@@ -152,49 +146,46 @@ const nftRoute = createRoute({
 const cartRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/carrinho',
-  component: CartPage,
+  component: lazyRouteComponent(() => import('@/pages/CartPage'), 'CartPage'),
 })
 
 const checkoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/checkout',
   beforeLoad: requireAuth('/carrinho', 'Entre para conectar sua carteira e finalizar a compra.'),
-  component: CheckoutPage,
+  component: lazyRouteComponent(() => import('@/pages/CheckoutPage'), 'CheckoutPage'),
 })
 
 const orderRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/pedido/$orderId',
   beforeLoad: requireAuth('/', 'Entre para ver seu pedido.'),
-  component: function OrderRoute() {
-    const { orderId } = orderRoute.useParams()
-    return <OrderPage orderId={orderId} />
-  },
+  component: lazyRouteComponent(() => import('@/pages/OrderPage'), 'OrderRoutePage'),
 })
 
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/perfil',
   beforeLoad: requireAuth('/', 'Entre para acessar seu perfil.'),
-  component: ProfileLayout,
+  component: lazyRouteComponent(() => import('@/pages/profile/ProfileLayout'), 'ProfileLayout'),
 })
 
 const profileIndexRoute = createRoute({
   getParentRoute: () => profileRoute,
   path: '/',
-  component: ProfilePage,
+  component: lazyRouteComponent(() => import('@/pages/profile/ProfilePage'), 'ProfilePage'),
 })
 
 const walletsRoute = createRoute({
   getParentRoute: () => profileRoute,
   path: '/carteiras',
-  component: WalletsPage,
+  component: lazyRouteComponent(() => import('@/pages/profile/WalletsPage'), 'WalletsPage'),
 })
 
 const favoritesRoute = createRoute({
   getParentRoute: () => profileRoute,
   path: '/favoritos',
-  component: FavoritesPage,
+  component: lazyRouteComponent(() => import('@/pages/profile/FavoritesPage'), 'FavoritesPage'),
 })
 
 function NotFound() {

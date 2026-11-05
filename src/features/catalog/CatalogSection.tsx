@@ -1,15 +1,17 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { lazy, Suspense, useRef, useState, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { SearchIcon, XIcon } from 'lucide-react'
 import { nftListQuery } from '@/api/nfts'
 import { CATEGORIES, NETWORKS, SORTS, TABS } from '@/api/types'
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
 import { FilterPanel } from './FilterPanel'
 import { NftCard, NftCardSkeleton } from './NftCard'
 import { Pagination } from './Pagination'
 import { toListQuery, type CatalogSearch } from './search-schema'
+
+// gaveta de filtros (mobile) carregada só quando aberta
+const FiltersSheet = lazy(() => import('./FiltersSheet').then((m) => ({ default: m.FiltersSheet })))
 import { FilterIcon } from '@/components/figma-icons'
 
 interface Props {
@@ -177,29 +179,11 @@ export function CatalogSection({ search, onChange, showFeatured = true, mobileHe
         </div>
       </div>
 
-      <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
-        <SheetContent side="left" className="w-[85vw] max-w-sm overflow-y-auto bg-card p-4">
-          <SheetHeader className="p-0">
-            <SheetTitle>Filtros</SheetTitle>
-            <SheetDescription>Os filtros são aplicados imediatamente.</SheetDescription>
-          </SheetHeader>
-          <label className="grid gap-1.5 text-sm">
-            <span className="font-semibold">Ordenar por</span>
-            <select
-              value={search.sort ?? 'recent'}
-              onChange={(e) => onChange({ sort: e.target.value === 'recent' ? undefined : (e.target.value as CatalogSearch['sort']) })}
-              className="rounded-sm border border-input bg-background px-2 py-2 text-sm"
-            >
-              {SORTS.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <FilterPanel search={search} facets={data?.facets} onChange={onChange} />
-        </SheetContent>
-      </Sheet>
+      {filtersOpen && (
+        <Suspense fallback={null}>
+          <FiltersSheet open={filtersOpen} onOpenChange={setFiltersOpen} search={search} facets={data?.facets} onChange={onChange} />
+        </Suspense>
+      )}
     </section>
   )
 }
