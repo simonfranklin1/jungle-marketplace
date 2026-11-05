@@ -13,6 +13,8 @@ import { Footer } from '@/components/layout/Footer'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { Toaster } from '@/components/ui/sonner'
 import { AuthDialog } from '@/features/auth/AuthDialog'
+import { LiveAnnouncer } from '@/features/realtime/LiveAnnouncer'
+import { QaPanel } from '@/features/realtime/QaPanel'
 import { catalogSearchSchema, type CatalogSearch } from '@/features/catalog/search-schema'
 import { CatalogSection } from '@/features/catalog/CatalogSection'
 import { nftDetailQuery, nftListQuery, nftRelatedQuery } from '@/api/nfts'
@@ -43,6 +45,8 @@ function RootLayout() {
       <Footer />
       <MobileNav />
       <AuthDialog />
+      <LiveAnnouncer />
+      <QaPanel />
       <Toaster position="top-center" richColors closeButton expand visibleToasts={4} />
     </>
   )

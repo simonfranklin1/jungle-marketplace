@@ -30,7 +30,7 @@ export function orderQuery(uid: string, id: string) {
     queryKey: meKeys.order(uid, id),
     queryFn: ({ signal }) => api.get<Order>(`/orders/${encodeURIComponent(id)}`, { signal }).then((r) => r.data),
     // enquanto pendente, consulta periodicamente (fallback caso o evento em tempo real se perca)
-    refetchInterval: (q) => (q.state.data?.status === 'pending' ? 2000 : false),
+    refetchInterval: (q) => (q.state.data?.status === 'pending' ? 5000 : false),
   })
 }
 

@@ -6,6 +6,7 @@ import { queryClient } from '@/api/query-client'
 import { createAppRouter } from '@/router'
 import { bootstrapAuth } from '@/features/auth/auth-actions'
 import { configureMockRecovery } from '@/api/client'
+import { startRealtime } from '@/features/realtime/realtime-client'
 import './index.css'
 
 /**
@@ -27,9 +28,11 @@ async function enableMocking() {
     serviceWorker: { url: '/mockServiceWorker.js' },
   } as const
   await worker.start(options)
+  // o Service Worker pode ser reiniciado pelo navegador e "esquecer" esta aba: reativamos só o
+  // registro da aba (sem parar o MSW, que também intercepta o WebSocket do Socket.IO)
   configureMockRecovery(async () => {
-    worker.stop()
-    await worker.start({ ...options, quiet: true })
+    navigator.serviceWorker.controller?.postMessage('MOCK_ACTIVATE')
+    await new Promise((r) => setTimeout(r, 150))
   })
 }
 
@@ -37,6 +40,7 @@ const router = createAppRouter(queryClient)
 
 enableMocking().then(() => {
   bootstrapAuth()
+  void startRealtime(queryClient)
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>

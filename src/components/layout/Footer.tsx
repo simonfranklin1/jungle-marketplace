@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { FacebookIcon, InstagramIcon, LinkedinIcon, TwitterIcon, YoutubeIcon } from '@/components/brand-icons'
 import { comingSoon } from '@/lib/coming-soon'
+import { useRealtimeStatus } from '@/features/realtime/realtime-client'
 
 const FEATURES = [
   { letter: 'W', title: 'Segurança da carteira', text: 'Proteja sua carteira e colecione arte digital verificada com confiança.' },
@@ -119,7 +120,10 @@ export function Footer() {
           </div>
         </div>
       </div>
-      <p className="mt-4 text-center text-xs">© 2026 Kurio. Propriedade digital para todos.</p>
+      <p className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-center text-xs">
+        <span>© 2026 Kurio. Propriedade digital para todos.</span>
+        <RealtimeBadge />
+      </p>
     </footer>
   )
 }
@@ -168,5 +172,19 @@ function Newsletter() {
         Receba lançamentos selecionados, histórias de criadores e novidades do mercado.
       </p>
     </form>
+  )
+}
+
+function RealtimeBadge() {
+  const status = useRealtimeStatus()
+  const label = status === 'connected' ? 'Preços ao vivo' : status === 'connecting' ? 'Conectando…' : 'Reconectando…'
+  return (
+    <span className="inline-flex items-center gap-1.5 text-muted-foreground" data-testid="realtime-status" data-status={status}>
+      <span
+        aria-hidden
+        className={`size-2 rounded-full ${status === 'connected' ? 'bg-emerald-400' : 'animate-pulse bg-amber-400'}`}
+      />
+      {label}
+    </span>
   )
 }
