@@ -65,20 +65,28 @@ export function Field({
   children,
   id,
   hint,
+  required = false,
 }: {
   label: string
   error?: string
   id: string
   hint?: string
-  children: (props: { id: string; 'aria-invalid': boolean; 'aria-describedby'?: string }) => ReactNode
+  /** campo obrigatório: asterisco do Figma (#EA6B4F, colado ao texto) + aria-required */
+  required?: boolean
+  children: (props: { id: string; 'aria-invalid': boolean; 'aria-describedby'?: string; 'aria-required'?: boolean }) => ReactNode
 }) {
   const describedBy = [error && `${id}-error`, hint && `${id}-hint`].filter(Boolean).join(' ') || undefined
   return (
     <div className="grid gap-1.5">
       <label htmlFor={id} className="text-sm">
         {label}
+        {required && (
+          <span aria-hidden className="ml-px text-[#EA6B4F]">
+            *
+          </span>
+        )}
       </label>
-      {children({ id, 'aria-invalid': !!error, 'aria-describedby': describedBy })}
+      {children({ id, 'aria-invalid': !!error, 'aria-describedby': describedBy, ...(required && { 'aria-required': true }) })}
       {hint && !error && (
         <p id={`${id}-hint`} className="text-xs text-muted-foreground">
           {hint}
@@ -94,7 +102,7 @@ export function Field({
 }
 
 export const inputCls =
-  'h-10 w-full rounded-sm border border-input bg-background px-3 text-sm placeholder:text-muted-foreground/80 focus-visible:border-primary aria-invalid:border-destructive'
+  'h-10 w-full rounded-[3px] border border-input bg-background px-3 text-sm placeholder:text-muted-foreground/80 focus-visible:border-primary aria-invalid:border-destructive'
 
 export function PasswordInput(props: React.ComponentProps<'input'>) {
   const [show, setShow] = useState(false)

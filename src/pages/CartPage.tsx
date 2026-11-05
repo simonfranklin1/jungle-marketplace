@@ -121,7 +121,7 @@ export function CartPage() {
               type="button"
               onClick={goCheckout}
               disabled={blocking || !quote.data || quote.isFetching || cart.isSaving}
-              className="mt-5 h-11 w-full rounded-sm bg-primary font-semibold text-primary-foreground hover:bg-primary/85 disabled:opacity-50"
+              className="mt-5 h-10 w-full rounded-sm bg-primary font-semibold text-primary-foreground hover:bg-primary/85 disabled:opacity-50"
             >
               Conectar e finalizar
             </button>
@@ -220,7 +220,7 @@ function CartRow({
               <PlusIcon className="size-3.5" aria-hidden />
             </button>
           </div>
-          <span className="font-semibold text-primary">
+          <span className="font-semibold text-price">
             <span className="sr-only">Total do item: </span>
             {formatEth(line.lineTotalEth)}
           </span>
@@ -324,7 +324,7 @@ function CouponBox({
             <button
               type="submit"
               disabled={validate.isPending}
-              className="inline-flex h-11 items-center gap-1 rounded-r-sm bg-primary px-5 font-semibold text-primary-foreground disabled:opacity-60"
+              className="inline-flex h-11 items-center gap-1 rounded-l-none rounded-r-[3px] bg-primary px-5 font-semibold text-primary-foreground disabled:opacity-60"
             >
               {validate.isPending && <Loader2Icon className="size-4 animate-spin" aria-hidden />}
               Aplicar
@@ -371,7 +371,7 @@ export function Summary({ quote, loading, networkPending = false }: { quote?: Qu
       <p className="text-right text-xs text-primary">{networkPending ? 'Selecione uma rede para calcular' : 'Taxa estimada'}</p>
       <div className={cn(row, 'border-t border-border pt-3 text-base font-bold')}>
         <dt>Total</dt>
-        <dd className="text-lg text-primary">{networkPending ? '—' : formatEth(quote.totalEth)}</dd>
+        <dd className="text-lg text-price">{networkPending ? '—' : formatEth(quote.totalEth)}</dd>
       </div>
     </dl>
   )

@@ -21,7 +21,7 @@ export function NftCard({ nft, priority = false, className }: { nft: NftSummary;
   const soldOut = nft.available === 0
   return (
     <article className={cn('group relative', className)}>
-      <div className="relative rounded-[20px] bg-[linear-gradient(143.28deg,_#241612_-12%,_#2F1D15_106.59%)] md:bg-[#241612] px-2 py-3 md:rounded-none md:px-1 md:pt-6 md:pb-[26px]">
+      <div className="relative rounded-[20px] bg-[linear-gradient(143.28deg,_#241612_-12%,_#2F1D15_106.59%)] md:bg-[#241612] px-[3.5px] pt-3 pb-5 md:rounded-none md:px-1 md:pt-6 md:pb-[26px]">
         {nft.rarity === 'raro' && (
           <span className="absolute top-4 left-0 z-10 bg-primary px-3 py-0.5 text-xs font-semibold text-primary-foreground md:top-6">RARO</span>
         )}
@@ -41,7 +41,7 @@ export function NftCard({ nft, priority = false, className }: { nft: NftSummary;
         <FavoriteBadge nftId={nft.id} name={nft.name} />
         <HoverActions nft={nft} soldOut={soldOut} />
       </div>
-      <h3 className="mt-3 text-sm">
+      <h3 className="mt-2 pl-2 text-sm md:mt-3 md:pl-0">
         <Link
           to="/nft/$nftId"
           params={{ nftId: nft.id }}
@@ -50,8 +50,8 @@ export function NftCard({ nft, priority = false, className }: { nft: NftSummary;
           {nft.name}
         </Link>
       </h3>
-      <p className="text-sm font-bold">
-        <span className="text-primary">{formatEth(nft.priceEth)}</span>
+      <p className="pl-2 text-sm font-bold md:pl-0">
+        <span className="text-price">{formatEth(nft.priceEth)}</span>
         {nft.previousPriceEth && (
           <>
             {' '}

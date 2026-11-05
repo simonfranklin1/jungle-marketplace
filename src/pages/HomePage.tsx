@@ -39,7 +39,7 @@ function Hero() {
       <div className="relative grid grid-cols-[minmax(0,1fr)_112px] items-center gap-4 overflow-hidden rounded-3xl bg-gradient-to-br from-[#5a3a22] to-[#2a1a12] p-5 sm:grid-cols-[minmax(0,1fr)_200px] md:grid-cols-[1fr_300px] md:gap-6 md:rounded-none md:bg-none md:p-0 lg:grid-cols-[1fr_400px]">
         <div className="md:pl-8">
           <p className="text-xs md:text-sm">Bem-vindo à Kurio</p>
-          <h1 className="mt-2 text-lg leading-snug font-bold tracking-wider sm:text-2xl md:mt-3 md:text-4xl md:leading-[1.6]">
+          <h1 className="mt-2 text-lg leading-snug font-bold tracking-wider sm:text-2xl md:mt-3 md:text-[43px] md:leading-[70px]">
             {slide.title[0]}
             <br />
             {slide.title[1]}
@@ -101,9 +101,13 @@ function PromoCards({ onExplore, onExploreAll }: { onExplore: () => void; onExpl
   return (
     <section aria-label="Coleções em destaque" className="container-k mt-20 grid gap-6 md:grid-cols-2">
       {cards.map((c) => (
-        <article key={c.title} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] items-center gap-3 bg-card">
-          <img src={c.img} alt="" width={240} height={240} loading="lazy" className="aspect-square w-full object-cover" />
-          <div className="p-3 text-right">
+        <article key={c.title} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] items-center gap-3 bg-card rounded-[8px]">
+          <div className="relative overflow-hidden rounded-[17px]">
+            <img src={c.img} alt="" width={240} height={240} loading="lazy" className="aspect-square w-full object-cover" />
+            <span aria-hidden className="pointer-events-none absolute top-[134px] left-[-199px] size-[256px] rounded-full border border-primary" />
+            <span aria-hidden className="pointer-events-none absolute top-[142px] left-[-191px] size-[256px] rounded-full border-2 border-primary" />
+          </div>
+          <div className="p-5 text-right">
             <h2 className="text-sm font-bold">{c.title}</h2>
             <p className="mt-2 text-xs leading-5 text-muted-foreground">{c.text}</p>
             <a
@@ -138,7 +142,7 @@ function Journal() {
       </p>
       <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {POSTS.map((p) => (
-          <li key={p.title} className="bg-card">
+          <li key={p.title} className="bg-card rounded-[8px] overflow-hidden">
             <img src={p.img} alt="" width={300} height={200} loading="lazy" className="aspect-[3/2] w-full object-cover" />
             <div className="p-3">
               <p className="text-[11px] text-muted-foreground">

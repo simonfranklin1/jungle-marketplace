@@ -13,12 +13,12 @@ test('compra completa do catálogo até o recibo confirmado @mobile', async ({ a
   await page.getByRole('button', { name: 'Conectar e finalizar' }).click()
   const dialog = page.getByRole('dialog')
   await dialog.getByLabel('E-mail').fill(DEMO.email)
-  await dialog.getByLabel('Senha', { exact: true }).fill(DEMO.password)
+  await dialog.getByLabel(/^Senha\*?$/).fill(DEMO.password)
   await dialog.getByRole('button', { name: 'Entrar', exact: true }).click()
   await expect(page).toHaveURL(/\/checkout/)
 
   // dados do perfil já preenchidos; conecta a carteira cadastrada e confirma
-  await expect(page.getByLabel('Nome de exibição *')).toHaveValue(DEMO.name)
+  await expect(page.getByLabel(/^Nome de exibição\*?$/)).toHaveValue(DEMO.name)
   await connectWalletAtCheckout(page)
   await page.getByRole('button', { name: 'Confirmar compra' }).click()
 

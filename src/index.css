@@ -29,6 +29,7 @@
   --color-background: var(--background);
   --color-band: var(--band);
   --color-subtle: var(--subtle);
+  --color-price: var(--price);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -38,29 +39,30 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Kurio é um tema escuro único (Figma). */
+/* Kurio é um tema escuro único. Valores = variáveis do Figma (comentários com o nome do token). */
 :root {
   color-scheme: dark;
-  --background: #140D0A;
-  --foreground: #f4ece1;
+  --background: #140D0A; /* color/ink */
+  --foreground: #F5F1EB; /* color/foreground */
   --card: #241612;
-  --card-foreground: #f4ece1;
-  --popover: #211714;
-  --popover-foreground: #f4ece1;
+  --card-foreground: #F5F1EB;
+  --popover: #241612; /* color/surface-card */
+  --popover-foreground: #F5F1EB;
   --primary: #D28A4C;
-  --primary-foreground: #1a0f0a;
-  --secondary: #2c1f1a;
-  --secondary-foreground: #f4ece1;
-  --muted: #2c1f1a;
-  --muted-foreground: #d0a983;
-  --subtle: #b9a08a;
-  --accent: #2c1f1a;
-  --accent-foreground: #f4ece1;
+  --primary-foreground: #140D0A; /* color/ink */
+  --secondary: #2F1D15; /* color/surface-raised */
+  --secondary-foreground: #F5F1EB;
+  --muted: #2F1D15;
+  --muted-foreground: #CFB28C; /* color/text-secondary */
+  --subtle: #B39463; /* color/secondary */
+  --accent: #2F1D15;
+  --accent-foreground: #F5F1EB;
   --destructive: #ff7a66;
-  --border: #3b2a22;
-  --input: #4a3328;
+  --border: #3F2319; /* color/border */
+  --input: #55321F; /* color/border-soft */
   --ring: #e8a066;
-  --band: #3a2212;
+  --band: #38220F; /* color/surface-dark */
+  --price: #E89B55; /* color/text-accent (preços) */
   --radius: 0.375rem;
 }
 
@@ -109,9 +111,10 @@
   }
   .container-k {
     width: 100%;
-    max-width: 1200px;
+    /* Figma: 1200px de conteúdo (margens de 120px no frame de 1440) + padding lateral */
+    max-width: calc(1200px + 3rem);
     margin-inline: auto;
-    padding-inline: 1rem;
+    padding-inline: 1.5rem; /* Figma mobile: 24px */
   }
   @media (min-width: 768px) {
     .container-k { padding-inline: 1.5rem; }

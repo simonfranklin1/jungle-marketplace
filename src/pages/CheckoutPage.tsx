@@ -300,13 +300,13 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
         <fieldset disabled={busy} className="min-w-0">
           <legend className="mb-4 text-lg font-bold">Perfil do colecionador</legend>
           <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
-            <Field id={`${uid}-dn`} label="Nome de exibição *" error={errors.displayName}>
+            <Field id={`${uid}-dn`} label="Nome de exibição" required error={errors.displayName}>
               {(p) => <input {...p} value={values.displayName} onChange={set('displayName')} autoComplete="name" className={inputCls} />}
             </Field>
-            <Field id={`${uid}-un`} label="Nome de usuário *" error={errors.username}>
+            <Field id={`${uid}-un`} label="Nome de usuário" required error={errors.username}>
               {(p) => <input {...p} value={values.username} onChange={set('username')} autoComplete="username" className={inputCls} />}
             </Field>
-            <Field id={`${uid}-net`} label="Rede *" error={errors.network}>
+            <Field id={`${uid}-net`} label="Rede" required error={errors.network}>
               {(p) => (
                 <select {...p} value={values.network} onChange={set('network')} className={inputCls}>
                   <option value="">Selecione uma rede</option>
@@ -318,12 +318,12 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
                 </select>
               )}
             </Field>
-            <Field id={`${uid}-pn`} label="Nome do perfil *" error={errors.profileName}>
+            <Field id={`${uid}-pn`} label="Nome do perfil" required error={errors.profileName}>
               {(p) => <input {...p} value={values.profileName} onChange={set('profileName')} className={inputCls} />}
             </Field>
             <Field
               id={`${uid}-addr`}
-              label="Endereço da carteira *"
+              label="Endereço da carteira" required
               error={errors.walletAddress}
               hint={useOther ? 'Informe o endereço 0x que receberá os NFTs.' : 'Preenchido ao conectar a carteira.'}
             >
@@ -342,7 +342,7 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
             <Field id={`${uid}-sec`} label="Carteira secundária (opcional)" error={errors.secondaryWallet}>
               {(p) => <input {...p} value={values.secondaryWallet} onChange={set('secondaryWallet')} placeholder="ENS ou carteira secundária" className={inputCls} />}
             </Field>
-            <Field id={`${uid}-wt`} label="Tipo de carteira *" error={errors.walletType}>
+            <Field id={`${uid}-wt`} label="Tipo de carteira" required error={errors.walletType}>
               {(p) => (
                 <select {...p} value={values.walletType} onChange={(e) => chooseWallet(e.target.value as WalletType)} className={inputCls}>
                   <option value="">Selecione uma carteira</option>
@@ -357,10 +357,10 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
             <Field id={`${uid}-ref`} label="Código de indicação (opcional)" error={errors.referralCode}>
               {(p) => <input {...p} value={values.referralCode} onChange={set('referralCode')} className={inputCls} />}
             </Field>
-            <Field id={`${uid}-em`} label="E-mail *" error={errors.email}>
+            <Field id={`${uid}-em`} label="E-mail" required error={errors.email}>
               {(p) => <input {...p} type="email" value={values.email} onChange={set('email')} autoComplete="email" className={inputCls} />}
             </Field>
-            <Field id={`${uid}-ens`} label="Nome ENS *" error={errors.ensName}>
+            <Field id={`${uid}-ens`} label="Nome ENS" required error={errors.ensName}>
               {(p) => (
                 <div className="flex">
                   <input {...p} value={values.ensName} onChange={set('ensName')} className={cn(inputCls, 'rounded-r-none')} />
@@ -405,7 +405,7 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
                   <p className="text-xs text-muted-foreground">ID do token: {l.tokenId}</p>
                 </div>
                 <span className="text-xs">(x {l.quantity})</span>
-                <span className="font-semibold text-primary">{formatEth(l.lineTotalEth)}</span>
+                <span className="font-semibold text-price">{formatEth(l.lineTotalEth)}</span>
               </li>
             ))}
           </ul>
@@ -428,7 +428,7 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
               {WALLETS.map((w) => (
                 <label
                   key={w.id}
-                  className="flex cursor-pointer items-center gap-3 rounded-sm border border-border px-4 py-3 has-checked:border-primary has-focus-visible:outline-2 has-focus-visible:outline-ring"
+                  className="flex h-[45px] cursor-pointer items-center gap-3 rounded-sm border border-border px-4 has-checked:border-primary has-focus-visible:outline-2 has-focus-visible:outline-ring"
                 >
                   <input
                     type="radio"
@@ -490,7 +490,7 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
             type="submit"
             disabled={busy || !quote.data || quote.isFetching}
             aria-busy={busy}
-            className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-sm bg-primary font-semibold text-primary-foreground hover:bg-primary/85 disabled:opacity-60"
+            className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[8px] bg-primary font-semibold text-primary-foreground hover:bg-primary/85 disabled:opacity-60"
           >
             {busy && <Loader2Icon className="size-4 animate-spin" aria-hidden />}
             Confirmar compra

@@ -135,7 +135,7 @@ function Receipt({ order }: { order: Order }) {
                     </div>
                   </td>
                   <td className="text-center">(x {l.quantity})</td>
-                  <td className="text-right font-bold text-primary">{formatEth(l.lineTotalEth)}</td>
+                  <td className="text-right font-bold text-price">{formatEth(l.lineTotalEth)}</td>
                 </tr>
               ))}
             </tbody>
@@ -155,7 +155,7 @@ function Receipt({ order }: { order: Order }) {
               <tr className="border-b border-border">
                 <td />
                 <th scope="row" className="py-2 text-left">Total</th>
-                <td className="py-2 text-right text-base font-bold text-primary">{formatEth(r.totalEth)}</td>
+                <td className="py-2 text-right text-base font-bold text-price">{formatEth(r.totalEth)}</td>
               </tr>
             </tfoot>
           </table>

@@ -105,7 +105,7 @@ function NftDetail({ nft }: { nft: Nft }) {
               width={560}
               height={560}
               fetchPriority="high"
-              className="aspect-square w-full rounded-2xl object-cover"
+              className="aspect-square w-full rounded-[16px] object-cover"
             />
             <button
               type="button"
@@ -119,9 +119,9 @@ function NftDetail({ nft }: { nft: Nft }) {
         </div>
 
         <div>
-          <h1 className="text-2xl font-bold tracking-wide md:text-3xl">{nft.name}</h1>
+          <h1 className="text-[20px] leading-4 font-bold md:text-[28px] md:leading-normal">{nft.name}</h1>
           <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
-            <p className="text-xl font-bold text-primary md:text-2xl" aria-live="polite">
+            <p className="text-xl font-bold text-price md:text-2xl" aria-live="polite">
               {formatEth(nft.priceEth)}
               {nft.previousPriceEth && (
                 <s className="ml-2 text-base font-normal text-subtle">
@@ -225,7 +225,7 @@ function NftDetail({ nft }: { nft: Nft }) {
                       action: { label: 'Ver carrinho', onClick: () => navigate({ to: '/carrinho' }) },
                     })
                 }}
-                className="h-9 rounded-sm bg-primary px-8 text-sm font-bold text-primary-foreground hover:bg-primary/85 disabled:opacity-40"
+                className="h-9 rounded-[6px] bg-primary px-8 text-sm font-bold text-primary-foreground hover:bg-primary/85 disabled:opacity-40"
               >
                 {soldOut ? 'ESGOTADO' : 'COMPRAR'}
               </button>

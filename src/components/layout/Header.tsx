@@ -1,17 +1,18 @@
 import { lazy, Suspense, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { LogIn, LogOut, SearchIcon, ShoppingCart } from 'lucide-react'
+import { LogIn, LogOut, SearchIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useCartCount } from '@/features/cart/use-cart'
 import { comingSoon } from '@/lib/coming-soon'
 import { authDialog, useUser } from '@/features/auth/session-store'
 import { logout } from '@/features/auth/auth-actions'
+import { CartIcon } from '../figma-icons'
 
 // o diálogo de busca (Base UI) só é baixado quando aberto
 const SearchDialog = lazy(() => import('./SearchDialog').then((m) => ({ default: m.SearchDialog })))
 
 const navLink =
-  'relative py-2 text-sm text-foreground transition-colors hover:text-primary data-[status=active]:font-semibold data-[status=active]:text-primary data-[status=active]:after:absolute data-[status=active]:after:inset-x-0 data-[status=active]:after:-bottom-[13px] data-[status=active]:after:h-0.5 data-[status=active]:after:bg-primary'
+  'relative py-2 text-sm text-foreground transition-colors hover:text-primary data-[status=active]:font-semibold data-[status=active]:text-primary data-[status=active]:after:absolute data-[status=active]:after:inset-x-0 data-[status=active]:after:-bottom-[5px] data-[status=active]:after:h-0.5 data-[status=active]:after:bg-primary'
 
 export function Header() {
   const [searchOpen, setSearchOpen] = useState(false)
@@ -19,8 +20,8 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 hidden bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80 md:block">
-      <div className="container-k">
-        <div className="flex h-16 items-center justify-between gap-4 border-b border-border">
+      <div className="container-k pt-6">
+        <div className="flex h-[45px] items-center justify-between gap-4 border-b border-border">
           <Link to="/" className="text-sm font-bold tracking-[0.2em]" aria-label="Kurio, página inicial">
             KURIO
           </Link>
@@ -54,7 +55,7 @@ export function Header() {
               className="relative grid size-9 place-items-center rounded-md hover:text-primary"
               aria-label={`Carrinho, ${count} ${count === 1 ? 'item' : 'itens'}`}
             >
-              <ShoppingCart className="size-5" aria-hidden />
+              <CartIcon className="size-5" aria-hidden />
               {count > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 grid min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] leading-4 font-bold text-primary-foreground">
                   {count}

@@ -122,6 +122,7 @@ Após conectar, o cliente envia `auth` com o token (e reenvia no login/logout/tr
 - Ações fora do escopo (Criadores, Aprenda, editoriais, login social, leitor de QR, newsletter, explorador de blocos) **não fingem funcionar**: mostram "não faz parte desta versão".
 - Painel de QA opcional (`?qa=1`) para avaliadores dispararem cenários e eventos sem ferramentas externas.
 - Mercado "ao vivo": a cada 30 s um NFT em destaque muda de preço ou estoque (desligado nos testes).
+- Indicador de conexão no rodapé ("Preços ao vivo" / "Conectando…" / "Reconectando…"): mostra o estado do Socket.IO, para o usuário saber quando os preços deixaram de atualizar e quando voltaram (após reconectar, o app reconcilia com a REST). Não existe no Figma; é um acréscimo discreto de feedback. Também serve aos testes E2E (`data-testid="realtime-status"`).
 - Feedback acessível: região `aria-live` global para mutações e eventos; toasts expandidos; erros de formulário com `aria-invalid` + `aria-describedby`; foco controlado em diálogos e gavetas; `prefers-reduced-motion` respeitado.
 - Performance: rotas privadas e diálogos (login, busca, filtros) carregam sob demanda; validador da URL sem dependências.
 

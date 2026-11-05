@@ -4,7 +4,7 @@ Solução do [desafio de frontend da Jungle Gaming](https://github.com/junglegam
 
 O backend é **100% simulado com MSW** (REST + Socket.IO), inclusive no deploy público — não há servidor real nem blockchain.
 
-- **Aplicação publicada:** _adicione aqui a URL da Vercel_
+- **Aplicação publicada:** https://jungle-marketplace-seven.vercel.app (mocks e tempo real ativos; use `?qa=1` para o painel de cenários)
 - **Repositório:** https://github.com/simonfranklin1/jungle-marketplace
 - **Arquitetura e decisões:** [ARCHITECTURE.md](ARCHITECTURE.md)
 

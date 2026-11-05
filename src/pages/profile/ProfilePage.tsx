@@ -127,16 +127,16 @@ function ProfileForm({ profile }: { profile: User }) {
         Perfil do colecionador
       </h2>
       <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
-        <Field id={`${uid}-dn`} label="Nome de exibição *" error={errors.displayName}>
+        <Field id={`${uid}-dn`} label="Nome de exibição" required error={errors.displayName}>
           {(p) => <input {...p} value={values.displayName} onChange={set('displayName')} autoComplete="name" className={inputCls} />}
         </Field>
-        <Field id={`${uid}-un`} label="Nome de usuário *" error={errors.username}>
+        <Field id={`${uid}-un`} label="Nome de usuário" required error={errors.username}>
           {(p) => <input {...p} value={values.username} onChange={set('username')} autoComplete="username" className={inputCls} />}
         </Field>
-        <Field id={`${uid}-em`} label="E-mail *" error={errors.email}>
+        <Field id={`${uid}-em`} label="E-mail" required error={errors.email}>
           {(p) => <input {...p} type="email" value={values.email} onChange={set('email')} autoComplete="email" className={inputCls} />}
         </Field>
-        <Field id={`${uid}-ens`} label="Nome ENS *" error={errors.ensName}>
+        <Field id={`${uid}-ens`} label="Nome ENS" required error={errors.ensName}>
           {(p) => (
             <div className="flex">
               <span className="grid h-10 place-items-center rounded-l-sm border border-r-0 border-input px-3 text-sm">.eth</span>
@@ -144,7 +144,7 @@ function ProfileForm({ profile }: { profile: User }) {
             </div>
           )}
         </Field>
-        <Field id={`${uid}-wn`} label="Apelido da carteira *" error={errors.walletNickname}>
+        <Field id={`${uid}-wn`} label="Apelido da carteira" required error={errors.walletNickname}>
           {(p) => <input {...p} value={values.walletNickname} onChange={set('walletNickname')} className={inputCls} />}
         </Field>
         <AvatarField profile={profile} />

@@ -204,13 +204,13 @@ function WalletForm({
         save.mutate(values)
       }}
     >
-      <Field id={`${uid}-dn`} label="Nome de exibição *" error={errors.displayName}>
+      <Field id={`${uid}-dn`} label="Nome de exibição" required error={errors.displayName}>
         {(p) => <input {...p} value={values.displayName} onChange={set('displayName')} className={inputCls} />}
       </Field>
-      <Field id={`${uid}-nick`} label="Apelido da carteira *" error={errors.nickname}>
+      <Field id={`${uid}-nick`} label="Apelido da carteira" required error={errors.nickname}>
         {(p) => <input {...p} value={values.nickname} onChange={set('nickname')} className={inputCls} />}
       </Field>
-      <Field id={`${uid}-net`} label="Rede *" error={errors.network}>
+      <Field id={`${uid}-net`} label="Rede" required error={errors.network}>
         {(p) => (
           <select {...p} value={values.network} onChange={set('network')} className={inputCls}>
             {NETWORKS.map((n) => (
@@ -221,10 +221,10 @@ function WalletForm({
           </select>
         )}
       </Field>
-      <Field id={`${uid}-pn`} label="Nome do perfil *" error={errors.profileName}>
+      <Field id={`${uid}-pn`} label="Nome do perfil" required error={errors.profileName}>
         {(p) => <input {...p} value={values.profileName} onChange={set('profileName')} className={inputCls} />}
       </Field>
-      <Field id={`${uid}-addr`} label="Endereço da carteira *" error={errors.address}>
+      <Field id={`${uid}-addr`} label="Endereço da carteira" required error={errors.address}>
         {(p) => (
           <input {...p} value={values.address} onChange={set('address')} placeholder="Endereço 0x da carteira" spellCheck={false} className={cn(inputCls, 'font-mono text-xs')} />
         )}
@@ -232,7 +232,7 @@ function WalletForm({
       <Field id={`${uid}-sec`} label="ENS ou carteira secundária (opcional)" error={errors.secondaryAddress}>
         {(p) => <input {...p} value={values.secondaryAddress} onChange={set('secondaryAddress')} className={inputCls} />}
       </Field>
-      <Field id={`${uid}-wt`} label="Tipo de carteira *" error={errors.walletType}>
+      <Field id={`${uid}-wt`} label="Tipo de carteira" required error={errors.walletType}>
         {(p) => (
           <select {...p} value={values.walletType} onChange={set('walletType')} className={inputCls}>
             {WALLETS.map((w) => (
@@ -246,10 +246,10 @@ function WalletForm({
       <Field id={`${uid}-ref`} label="Código de indicação (opcional)" error={errors.referralCode}>
         {(p) => <input {...p} value={values.referralCode} onChange={set('referralCode')} className={inputCls} />}
       </Field>
-      <Field id={`${uid}-em`} label="E-mail *" error={errors.email}>
+      <Field id={`${uid}-em`} label="E-mail" required error={errors.email}>
         {(p) => <input {...p} type="email" value={values.email} onChange={set('email')} className={inputCls} />}
       </Field>
-      <Field id={`${uid}-ens`} label="Nome ENS *" error={errors.ensName}>
+      <Field id={`${uid}-ens`} label="Nome ENS" required error={errors.ensName}>
         {(p) => (
           <div className="flex">
             <span className="grid h-10 place-items-center rounded-l-sm border border-r-0 border-input px-3 text-sm">.eth</span>

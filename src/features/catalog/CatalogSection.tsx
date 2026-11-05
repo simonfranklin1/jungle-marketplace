@@ -56,7 +56,7 @@ export function CatalogSection({ search, onChange, showFeatured = true, mobileHe
       <MobileSearch value={search.q} onSubmit={(q) => onChange({ q })} onOpenFilters={() => setFiltersOpen(true)} />
       {mobileHero && <div className="mb-6 md:hidden">{mobileHero}</div>}
 
-      <div className="grid gap-6 md:grid-cols-[220px_1fr] lg:grid-cols-[240px_1fr] lg:gap-8">
+      <div className="grid gap-6 md:grid-cols-[220px_1fr] lg:grid-cols-[260px_1fr] lg:gap-8 xl:grid-cols-[310px_1fr] xl:gap-12">
         <aside className="hidden md:block" aria-label="Filtros">
           <div className="bg-card p-4">
             <FilterPanel search={search} facets={data?.facets} onChange={onChange} />
@@ -134,7 +134,7 @@ export function CatalogSection({ search, onChange, showFeatured = true, mobileHe
               </button>
             </div>
           ) : isPending ? (
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 lg:gap-x-6" aria-busy="true">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 lg:gap-x-6 xl:gap-x-[34px] xl:gap-y-[52px]" aria-busy="true">
               {Array.from({ length: 9 }, (_, i) => (
                 <NftCardSkeleton key={i} />
               ))}
@@ -159,7 +159,7 @@ export function CatalogSection({ search, onChange, showFeatured = true, mobileHe
               )}
               <ul
                 className={cn(
-                  'grid grid-cols-2 gap-x-4 gap-y-8 transition-opacity max-md:pb-8 lg:grid-cols-3 lg:gap-x-6',
+                  'grid grid-cols-2 gap-x-4 gap-y-6 transition-opacity max-md:pb-8 md:gap-y-8 lg:grid-cols-3 lg:gap-x-6 xl:gap-x-[34px] xl:gap-y-[52px]',
                   isFetching && isPlaceholderData && 'opacity-60',
                 )}
                 aria-busy={isFetching}

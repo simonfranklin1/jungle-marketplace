@@ -8,7 +8,7 @@ test.describe('Favoritos', () => {
     const dialog = page.getByRole('dialog')
     await expect(dialog).toContainText('Entre para salvar NFTs nos seus favoritos.')
     await dialog.getByLabel('E-mail').fill('demo@kurio.test')
-    await dialog.getByLabel('Senha', { exact: true }).fill('Kurio@123')
+    await dialog.getByLabel(/^Senha\*?$/).fill('Kurio@123')
     await dialog.getByRole('button', { name: 'Entrar', exact: true }).click()
     await expect(page.getByRole('button', { name: 'Favoritado' })).toHaveAttribute('aria-pressed', 'true')
   })

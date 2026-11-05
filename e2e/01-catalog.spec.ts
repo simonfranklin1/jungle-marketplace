@@ -31,7 +31,7 @@ test.describe('Catálogo', () => {
     // ordenação por maior preço: os preços aparecem em ordem decrescente
     await app.goto('/mercado?sort=price-desc')
     await expect(page.locator('#catalogo article')).toHaveCount(9)
-    const prices = await page.locator('#catalogo article p.font-bold span.text-primary').allTextContents()
+    const prices = await page.locator('#catalogo article p.font-bold span.text-price').allTextContents()
     const values = prices.map((p) => Number(p.replace(' ETH', '')))
     expect(values.length).toBeGreaterThan(1)
     expect([...values].sort((a, b) => b - a)).toEqual(values)
