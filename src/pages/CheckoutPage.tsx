@@ -73,6 +73,7 @@ export function CheckoutPage() {
   const user = useUser()
   const cart = useCart()
   const wallets = useQuery({ ...walletsQuery(user?.id ?? 'anon'), enabled: !!user })
+  const [submitting, setSubmitting] = useState(false)
 
   if (!user)
     return (
@@ -89,7 +90,7 @@ export function CheckoutPage() {
       </div>
     )
   if (cart.isLoading || wallets.isPending) return <div className="container-k pt-10"><div className="shimmer h-96 rounded-sm" aria-busy="true" aria-label="Carregando" /></div>
-  if (cart.items.length === 0)
+  if (cart.items.length === 0 && !submitting)
     return (
       <div className="container-k py-20 text-center">
         <h1 className="text-xl font-bold">Seu carrinho está vazio</h1>
@@ -98,10 +99,10 @@ export function CheckoutPage() {
         </Link>
       </div>
     )
-  return <CheckoutForm key={user.id} wallets={wallets.data ?? []} />
+  return <CheckoutForm key={user.id} wallets={wallets.data ?? []} onSubmittingChange={setSubmitting} />
 }
 
-function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
+function CheckoutForm({ wallets, onSubmittingChange }: { wallets: Wallet[]; onSubmittingChange: (busy: boolean) => void }) {
   const user = useUser()!
   const cart = useCart()
   const qc = useQueryClient()
@@ -124,7 +125,11 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
   const [useOther, setUseOther] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [wallet, setWallet] = useState<WalletState>({ status: 'idle' })
-  const [phase, setPhase] = useState<Phase>('idle')
+  const [phase, setPhaseState] = useState<Phase>('idle')
+  const setPhase = (p: Phase) => {
+    setPhaseState(p)
+    onSubmittingChange(p !== 'idle')
+  }
   const [alert, setAlert] = useState<{ tone: 'error' | 'info'; text: string; kind?: 'validation' } | null>(null)
   // mobile (frame "Pagamento com carteira"): os dados do colecionador vêm do perfil e ficam recolhidos
   const [showData, setShowData] = useState(false)
@@ -246,7 +251,6 @@ function CheckoutForm({ wallets }: { wallets: Wallet[] }) {
         qc.setQueryData(meKeys.order(user.id, order.id), order)
         qc.invalidateQueries({ queryKey: meKeys.cart(user.id) })
         qc.invalidateQueries({ queryKey: meKeys.orders(user.id), exact: true })
-        setPhase('idle')
         navigate({ to: '/pedido/$orderId', params: { orderId: order.id } })
         return
       } catch (e) {

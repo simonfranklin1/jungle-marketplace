@@ -46,6 +46,10 @@ test.describe('Falhas no pagamento', () => {
       if (r.method() === 'POST' && r.url().endsWith('/api/orders')) keys.push(r.headers()['idempotency-key'])
     })
     await page.getByRole('button', { name: 'Confirmar compra' }).click()
+    // o servidor confirma (e esvazia o carrinho) antes da resposta atrasada: a tela continua no
+    // pagamento, informando a nova tentativa — nunca troca para "carrinho vazio"
+    await expect(page.getByText('Resposta demorou; verificando o pedido com a mesma chave…')).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('heading', { name: 'Seu carrinho está vazio' })).toHaveCount(0)
     await expect(page).toHaveURL(/\/pedido\/ord_/, { timeout: 30_000 })
     // a 1ª resposta expirou (timeout); a 2ª tentativa usou a MESMA chave e recebeu o pedido já criado
     expect(keys.length).toBeGreaterThanOrEqual(2)
