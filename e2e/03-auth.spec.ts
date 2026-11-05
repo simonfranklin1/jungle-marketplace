@@ -75,6 +75,30 @@ test.describe('Conta e sessão', () => {
     await expect(page.getByRole('heading', { name: 'Carteira principal' })).toBeVisible()
   })
 
+  test('fechar o login pedido por um link protegido não reabre o modal @mobile', async ({ app, page }) => {
+    await app.goto('/')
+    const desktop = (page.viewportSize()?.width ?? 1440) >= 768
+    // no mobile: aba "Meu perfil" da barra inferior; no desktop: acesso direto à rota
+    const link = page.getByRole('link', { name: 'Meu perfil' }).last()
+    if (desktop) await page.goto('/perfil')
+    else await link.click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toContainText('Entre para acessar seu perfil.')
+    await dialog.getByRole('button', { name: 'Fechar' }).click()
+    // o foco volta ao link protegido (pré-carregamento por intenção): o modal deve continuar fechado
+    await expect(dialog).toBeHidden()
+    await page.waitForTimeout(500)
+    await expect(dialog).toBeHidden()
+    if (!desktop) {
+      await link.hover()
+      await page.waitForTimeout(300)
+      await expect(dialog).toBeHidden()
+      await page.getByRole('link', { name: 'Carrinho, 0 itens' }).last().click()
+      await expect(page).toHaveURL(/\/carrinho$/)
+      await expect(dialog).toBeHidden()
+    }
+  })
+
   test('troca de usuário não vaza carrinho nem favoritos', async ({ app, page }) => {
     await app.goto('/')
     await app.loginAPI(DEMO)

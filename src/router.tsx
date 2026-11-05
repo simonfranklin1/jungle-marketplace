@@ -60,8 +60,11 @@ function RootLayout() {
  */
 let appRouter: ReturnType<typeof createAppRouter> | null = null
 function requireAuth(fallback: '/' | '/carrinho', reason: string) {
-  return ({ location }: { location: { href: string } }) => {
+  return ({ location, preload }: { location: { href: string }; preload: boolean }) => {
     if (sessionStore.get()) return
+    // pré-carregamento por intenção (hover/foco/toque no link) não é navegação: não abre o login.
+    // Sem isso, ao fechar o modal o foco volta ao link protegido, o preload roda e o modal reabre.
+    if (preload) throw redirect({ to: fallback })
     const target = location.href
     authDialog.open('login', reason, () => void appRouter?.history.push(target))
     throw redirect({ to: fallback })
